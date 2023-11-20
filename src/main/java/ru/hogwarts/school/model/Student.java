@@ -1,6 +1,6 @@
 package ru.hogwarts.school.model;
 
-import ru.hogwarts.school.exception.StudentInvalideInputException;
+import ru.hogwarts.school.exception.InvalideInputException;
 
 import java.util.Objects;
 
@@ -28,7 +28,7 @@ public class Student {
             this.name = name;
             return;
         }
-        throw new StudentInvalideInputException();
+        throw new InvalideInputException();
     }
 
     public int getAge() {
@@ -40,7 +40,7 @@ public class Student {
             this.age = age;
             return;
         }
-        throw new StudentInvalideInputException();
+        throw new InvalideInputException();
     }
 
     @Override

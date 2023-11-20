@@ -1,6 +1,6 @@
 package ru.hogwarts.school.model;
 
-import ru.hogwarts.school.exception.FacultyInvalideInputException;
+import ru.hogwarts.school.exception.InvalideInputException;
 
 import java.util.Objects;
 
@@ -28,7 +28,7 @@ public class Faculty {
             this.name = name;
             return;
         }
-        throw new FacultyInvalideInputException();
+        throw new InvalideInputException();
     }
 
     public String getColor() {
@@ -40,7 +40,7 @@ public class Faculty {
             this.color = color;
             return;
         }
-        throw new FacultyInvalideInputException();
+        throw new InvalideInputException();
     }
 
     @Override

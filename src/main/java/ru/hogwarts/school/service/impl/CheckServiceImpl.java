@@ -12,26 +12,28 @@ import java.util.Map;
 public class CheckServiceImpl implements CheckService {
     @Override
     public boolean validateCheck(Student student) {
-        if (student.getName() == null
+        if (student == null
+                || student.getName() == null
                 || student.getName().isBlank()
                 || !student.getName().matches("[а-яА-Я]+")
                 || student.getAge() <= 0
                 || student.getId() < 0) {
-            throw new StudentInvalideInputException();
+            throw new InvalideInputException();
         }
         return false;
     }
 
     @Override
     public boolean validateCheck(Faculty faculty) {
-        if (faculty.getName() == null
+        if (faculty == null
+                || faculty.getName() == null
                 || faculty.getName().isBlank()
                 || !faculty.getName().matches("[а-яА-Я]+")
                 || faculty.getColor() == null
                 || faculty.getColor().isBlank()
                 || !faculty.getColor().matches("[а-яА-Я]+")
                 || faculty.getId() < 0) {
-            throw new FacultyInvalideInputException();
+            throw new InvalideInputException();
         }
         return false;
     }

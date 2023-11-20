@@ -25,15 +25,9 @@ public class StudentRepositoryImpl implements StudentRepository {
     @Override
     @PostConstruct
     public void init() {
-        add(new Student(0, "Драко", 12));
         add(new Student(0, "Гарри", 12));
-        add(new Student(0, "Гермиона", 12));
         add(new Student(0, "Рон", 12));
-        add(new Student(0, "Палумна", 12));
-        add(new Student(0, "Гойл", 12));
-        add(new Student(0, "Фред", 13));
-        add(new Student(0, "Джордж", 13));
-        add(new Student(0, "Джинни", 11));
+        add(new Student(0, "Гермиона", 12));
     }
 
     @Override

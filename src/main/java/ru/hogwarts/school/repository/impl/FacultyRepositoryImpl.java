@@ -28,7 +28,6 @@ public class FacultyRepositoryImpl implements FacultyRepository {
         add(new Faculty(0, "Гриффиндор", "красный"));
         add(new Faculty(0, "Слизерин", "зеленый"));
         add(new Faculty(0, "Когтевран", "синий"));
-        add(new Faculty(0, "Пуффендуй", "желтый"));
     }
 
     @Override
