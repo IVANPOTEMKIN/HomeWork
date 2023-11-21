@@ -22,11 +22,11 @@ public class CheckServiceImplTest {
     public static Stream<Arguments> provideParamsForStudentTest() {
         return Stream.of(
                 Arguments.of((Object) null),
-                Arguments.of(new Student(GARRY.getId(), null, GARRY.getAge())),
-                Arguments.of(new Student(GARRY.getId(), " ", GARRY.getAge())),
-                Arguments.of(new Student(GARRY.getId(), "Гарри_1", GARRY.getAge())),
-                Arguments.of(new Student(-1, GARRY.getName(), GARRY.getAge())),
-                Arguments.of(new Student(GARRY.getId(), GARRY.getName(), 0))
+                Arguments.of(new Student(HARRY.getId(), null, HARRY.getAge())),
+                Arguments.of(new Student(HARRY.getId(), " ", HARRY.getAge())),
+                Arguments.of(new Student(HARRY.getId(), "Гарри_1", HARRY.getAge())),
+                Arguments.of(new Student(-1, HARRY.getName(), HARRY.getAge())),
+                Arguments.of(new Student(HARRY.getId(), HARRY.getName(), 0))
         );
     }
 
@@ -45,7 +45,7 @@ public class CheckServiceImplTest {
 
     @Test
     void validateCheckStudent_success() {
-        assertFalse(service.validateCheck(GARRY));
+        assertFalse(service.validateCheck(HARRY));
     }
 
     @Test
@@ -98,7 +98,7 @@ public class CheckServiceImplTest {
 
         Exception actual = assertThrows(
                 StudentAlreadyAddedException.class,
-                () -> service.isStudentAlreadyAdded(getStudents(), GARRY)
+                () -> service.isStudentAlreadyAdded(getStudents(), HARRY)
         );
 
         assertEquals(expected, actual.getMessage());
@@ -119,7 +119,7 @@ public class CheckServiceImplTest {
 
     @Test
     void isNotStudentContains_success() {
-        assertFalse(service.isNotStudentContains(getStudents(), GARRY.getId()));
+        assertFalse(service.isNotStudentContains(getStudents(), HARRY.getId()));
     }
 
     @Test

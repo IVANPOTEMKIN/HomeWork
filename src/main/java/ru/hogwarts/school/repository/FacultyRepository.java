@@ -5,8 +5,6 @@ import ru.hogwarts.school.model.Faculty;
 import java.util.Collection;
 
 public interface FacultyRepository {
-    void init();
-
     Faculty add(Faculty faculty);
 
     Faculty get(long id);

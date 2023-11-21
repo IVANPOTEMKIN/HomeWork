@@ -6,7 +6,10 @@ import ru.hogwarts.school.repository.StudentRepository;
 import ru.hogwarts.school.service.CheckService;
 
 import javax.annotation.PostConstruct;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Repository("studentRep")
@@ -22,7 +25,6 @@ public class StudentRepositoryImpl implements StudentRepository {
         this.service = service;
     }
 
-    @Override
     @PostConstruct
     public void init() {
         add(new Student(0, "Гарри", 12));
@@ -36,7 +38,7 @@ public class StudentRepositoryImpl implements StudentRepository {
         service.isStudentAlreadyAdded(students, student);
 
         Student newStudent = new Student(++counterId, student.getName(), student.getAge());
-        students.put(counterId, newStudent);
+        students.put(newStudent.getId(), newStudent);
         return newStudent;
     }
 
@@ -55,7 +57,6 @@ public class StudentRepositoryImpl implements StudentRepository {
         updateStudent.setName(student.getName());
         updateStudent.setAge(student.getAge());
 
-        students.put(id, updateStudent);
         return updateStudent;
     }
 

@@ -5,8 +5,6 @@ import ru.hogwarts.school.model.Student;
 import java.util.Collection;
 
 public interface StudentRepository {
-    void init();
-
     Student add(Student student);
 
     Student get(long id);

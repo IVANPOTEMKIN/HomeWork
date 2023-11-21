@@ -33,7 +33,7 @@ public class FacultyController {
         return service.get(id);
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public Collection<Faculty> getAll() {
         return service.getAll();
     }

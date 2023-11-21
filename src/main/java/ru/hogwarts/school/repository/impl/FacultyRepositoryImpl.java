@@ -6,7 +6,10 @@ import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.service.CheckService;
 
 import javax.annotation.PostConstruct;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Repository("facultyRep")
@@ -22,7 +25,6 @@ public class FacultyRepositoryImpl implements FacultyRepository {
         this.service = service;
     }
 
-    @Override
     @PostConstruct
     public void init() {
         add(new Faculty(0, "Гриффиндор", "красный"));
@@ -36,7 +38,7 @@ public class FacultyRepositoryImpl implements FacultyRepository {
         service.isFacultyAlreadyAdded(faculties, faculty);
 
         Faculty newFaculty = new Faculty(++counterId, faculty.getName(), faculty.getColor());
-        faculties.put(counterId, newFaculty);
+        faculties.put(newFaculty.getId(), newFaculty);
         return newFaculty;
     }
 
@@ -55,8 +57,7 @@ public class FacultyRepositoryImpl implements FacultyRepository {
         updateFaculty.setName(faculty.getName());
         updateFaculty.setColor(faculty.getColor());
 
-        faculties.put(id, updateFaculty);
-        return faculty;
+        return updateFaculty;
     }
 
     @Override
