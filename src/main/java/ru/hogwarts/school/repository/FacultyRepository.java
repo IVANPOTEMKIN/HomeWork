@@ -1,19 +1,10 @@
 package ru.hogwarts.school.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import ru.hogwarts.school.model.Faculty;
 
 import java.util.Collection;
 
-public interface FacultyRepository {
-    Faculty add(Faculty faculty);
-
-    Faculty get(long id);
-
-    Faculty edit(long id, Faculty faculty);
-
-    Faculty remove(long id);
-
-    Collection<Faculty> getAll();
-
-    Collection<Faculty> getByColor(String color);
+public interface FacultyRepository extends JpaRepository<Faculty, Long> {
+    Collection<Faculty> findAllByColor(String color);
 }

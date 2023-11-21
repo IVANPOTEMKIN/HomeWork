@@ -1,6 +1,5 @@
 package ru.hogwarts.school.controller;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpStatusCodeException;
 import ru.hogwarts.school.model.Faculty;
@@ -14,7 +13,7 @@ public class FacultyController {
 
     private final FacultyService service;
 
-    public FacultyController(@Qualifier("facultyService") FacultyService service) {
+    public FacultyController(FacultyService service) {
         this.service = service;
     }
 
@@ -49,7 +48,7 @@ public class FacultyController {
     }
 
     @DeleteMapping("{id}")
-    public Faculty remove(@PathVariable long id) {
-        return service.remove(id);
+    public void remove(@PathVariable long id) {
+        service.remove(id);
     }
 }

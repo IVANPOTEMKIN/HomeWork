@@ -1,19 +1,10 @@
 package ru.hogwarts.school.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import ru.hogwarts.school.model.Student;
 
 import java.util.Collection;
 
-public interface StudentRepository {
-    Student add(Student student);
-
-    Student get(long id);
-
-    Student edit(long id, Student student);
-
-    Student remove(long id);
-
-    Collection<Student> getAll();
-
-    Collection<Student> getByAge(int age);
+public interface StudentRepository extends JpaRepository<Student, Long> {
+    Collection<Student> findAllByAge(int age);
 }
