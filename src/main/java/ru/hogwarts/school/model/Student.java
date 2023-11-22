@@ -46,7 +46,7 @@ public class Student {
     public void setName(String name) {
         if (name != null
                 && !name.isBlank()
-                && name.matches("[а-яА-Я]+")) {
+                && name.matches("[а-яА-Я ]+")) {
             this.name = name;
             return;
         }
@@ -73,10 +73,10 @@ public class Student {
         if (faculty != null
                 && faculty.getName() != null
                 && !faculty.getName().isBlank()
-                && faculty.getName().matches("[а-яА-Я]+")
+                && faculty.getName().matches("[а-яА-Я ]+")
                 && faculty.getColor() != null
                 && !faculty.getColor().isBlank()
-                && faculty.getColor().matches("[а-яА-Я]+")
+                && faculty.getColor().matches("[а-яА-Я -]+")
                 && !faculty.getName().equalsIgnoreCase(faculty.getColor())
                 && faculty.getId() != null
                 && faculty.getId() >= 0) {

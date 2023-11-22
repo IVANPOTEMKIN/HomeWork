@@ -46,7 +46,7 @@ public class Faculty {
     public void setName(String name) {
         if (name != null
                 && !name.isBlank()
-                && name.matches("[а-яА-Я]+")) {
+                && name.matches("[а-яА-Я ]+")) {
             this.name = name;
             return;
         }
@@ -60,7 +60,7 @@ public class Faculty {
     public void setColor(String color) {
         if (color != null
                 && !color.isBlank()
-                && color.matches("[а-яА-Я]+")) {
+                && color.matches("[а-яА-Я -]+")) {
             this.color = color;
             return;
         }

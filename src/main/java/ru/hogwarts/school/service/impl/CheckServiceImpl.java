@@ -17,7 +17,7 @@ public class CheckServiceImpl implements CheckService {
         if (student == null
                 || student.getName() == null
                 || student.getName().isBlank()
-                || !student.getName().matches("[а-яА-Я,\\s]+")
+                || !student.getName().matches("[а-яА-Я ]+")
                 || student.getAge() == null
                 || student.getAge() <= 0
                 || student.getId() == null
@@ -32,11 +32,11 @@ public class CheckServiceImpl implements CheckService {
         if (faculty == null
                 || faculty.getName() == null
                 || faculty.getName().isBlank()
-                || !faculty.getName().matches("[а-яА-Я]+")
+                || !faculty.getName().matches("[а-яА-Я ]+")
                 || faculty.getColor() == null
                 || faculty.getColor().isBlank()
-                || !faculty.getColor().matches("[а-яА-Я]+")
-                || faculty.getName().equalsIgnoreCase(faculty.getColor())
+                || !faculty.getColor().matches("[а-яА-Я -]+")
+                || faculty.getColor().equalsIgnoreCase(faculty.getName())
                 || faculty.getId() == null
                 || faculty.getId() < 0) {
             throw new InvalideInputException();
@@ -68,7 +68,7 @@ public class CheckServiceImpl implements CheckService {
     public boolean validateCheck(String str) {
         if (str == null
                 || str.isBlank()
-                || !str.matches("[а-яА-Я]+")) {
+                || !str.matches("[а-яА-Я -]+")) {
             throw new InvalideInputException();
         }
         return false;
@@ -78,10 +78,10 @@ public class CheckServiceImpl implements CheckService {
     public boolean validateCheck(String strOne, String strTwo) {
         if (strOne == null
                 || strOne.isBlank()
-                || !strOne.matches("[а-яА-Я]+")
+                || !strOne.matches("[а-яА-Я -]+")
                 || strTwo == null
                 || strTwo.isBlank()
-                || !strTwo.matches("[а-яА-Я]+")
+                || !strTwo.matches("[а-яА-Я -]+")
                 || strOne.equalsIgnoreCase(strTwo)) {
             throw new InvalideInputException();
         }
