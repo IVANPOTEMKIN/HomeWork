@@ -17,8 +17,10 @@ public class CheckServiceImpl implements CheckService {
         if (student == null
                 || student.getName() == null
                 || student.getName().isBlank()
-                || !student.getName().matches("[а-яА-Я]+")
+                || !student.getName().matches("[а-яА-Я,\\s]+")
+                || student.getAge() == null
                 || student.getAge() <= 0
+                || student.getId() == null
                 || student.getId() < 0) {
             throw new InvalideInputException();
         }
@@ -34,7 +36,53 @@ public class CheckServiceImpl implements CheckService {
                 || faculty.getColor() == null
                 || faculty.getColor().isBlank()
                 || !faculty.getColor().matches("[а-яА-Я]+")
+                || faculty.getName().equalsIgnoreCase(faculty.getColor())
+                || faculty.getId() == null
                 || faculty.getId() < 0) {
+            throw new InvalideInputException();
+        }
+        return false;
+    }
+
+    @Override
+    public boolean validateCheck(Long value) {
+        if (value == null || value <= 0) {
+            throw new InvalideInputException();
+        }
+        return false;
+    }
+
+    @Override
+    public boolean validateCheck(Long minValue, Long maxValue) {
+        if (minValue == null
+                || minValue <= 0
+                || maxValue == null
+                || maxValue <= 0
+                || maxValue <= minValue) {
+            throw new InvalideInputException();
+        }
+        return false;
+    }
+
+    @Override
+    public boolean validateCheck(String str) {
+        if (str == null
+                || str.isBlank()
+                || !str.matches("[а-яА-Я]+")) {
+            throw new InvalideInputException();
+        }
+        return false;
+    }
+
+    @Override
+    public boolean validateCheck(String strOne, String strTwo) {
+        if (strOne == null
+                || strOne.isBlank()
+                || !strOne.matches("[а-яА-Я]+")
+                || strTwo == null
+                || strTwo.isBlank()
+                || !strTwo.matches("[а-яА-Я]+")
+                || strOne.equalsIgnoreCase(strTwo)) {
             throw new InvalideInputException();
         }
         return false;
@@ -44,7 +92,7 @@ public class CheckServiceImpl implements CheckService {
     public boolean isStudentAlreadyAdded(Collection<Student> students, Student student) {
         for (Student element : students) {
             if (element.getName().equalsIgnoreCase(student.getName())
-                    && element.getAge() == student.getAge()) {
+                    && element.getAge().equals(student.getAge())) {
                 throw new StudentAlreadyAddedException();
             }
         }

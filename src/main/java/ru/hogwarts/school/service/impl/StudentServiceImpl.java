@@ -3,6 +3,7 @@ package ru.hogwarts.school.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.exception.StudentNotFoundException;
+import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 import ru.hogwarts.school.service.CheckService;
@@ -30,12 +31,13 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Student get(long id) {
+    public Student get(Long id) {
+        service.validateCheck(id);
         return repository.findById(id).orElseThrow(StudentNotFoundException::new);
     }
 
     @Override
-    public Student edit(long id, Student student) {
+    public Student edit(Long id, Student student) {
         Student updateStudent = get(id);
 
         service.validateCheck(student);
@@ -46,7 +48,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public void remove(long id) {
+    public void remove(Long id) {
         Student deleteStudent = get(id);
         repository.deleteById(deleteStudent.getId());
     }
@@ -57,7 +59,24 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Collection<Student> getByAge(int age) {
-        return repository.findAllByAge(age);
+    public Collection<Student> getByAge(Long minValue, Long maxValue) {
+        if (minValue != null & maxValue == null) {
+            service.validateCheck(minValue);
+            return repository.findByAge(minValue);
+        }
+        if (minValue == null & maxValue != null) {
+            service.validateCheck(maxValue);
+            return repository.findByAge(maxValue);
+        }
+        if (minValue != null & maxValue != null) {
+            service.validateCheck(minValue, maxValue);
+            return repository.findByAgeBetween(minValue, maxValue);
+        }
+        return repository.findAll();
+    }
+
+    @Override
+    public Faculty getFacultyById(Long id) {
+        return get(id).getFaculty();
     }
 }

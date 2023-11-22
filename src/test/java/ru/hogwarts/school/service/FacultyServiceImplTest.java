@@ -93,7 +93,7 @@ class FacultyServiceImplTest {
 
     @Test
     void getByAge_success() {
-        when(repository.findAllByColor(COLOR)).thenReturn(getFaculties());
+        when(repository.findByColor(COLOR)).thenReturn(getFaculties());
         assertEquals(getFaculties(), facultyService.getByColor(COLOR));
     }
 }

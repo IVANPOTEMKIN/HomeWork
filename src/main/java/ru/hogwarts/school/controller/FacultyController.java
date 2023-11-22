@@ -3,6 +3,7 @@ package ru.hogwarts.school.controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpStatusCodeException;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.FacultyService;
 
 import java.util.Collection;
@@ -28,7 +29,7 @@ public class FacultyController {
     }
 
     @GetMapping("{id}")
-    public Faculty get(@PathVariable long id) {
+    public Faculty get(@PathVariable Long id) {
         return service.get(id);
     }
 
@@ -37,18 +38,24 @@ public class FacultyController {
         return service.getAll();
     }
 
-    @GetMapping(params = "color")
-    public Collection<Faculty> getByAge(@RequestParam String color) {
-        return service.getByColor(color);
+    @GetMapping
+    public Collection<Faculty> getByNameOrColor(@RequestParam(required = false) String name,
+                                                @RequestParam(required = false) String color) {
+        return service.getByNameOrColor(name, color);
+    }
+
+    @GetMapping(params = "id")
+    public Collection<Student> getStudents(@RequestParam(required = false) Long id) {
+        return service.getStudentsByFacultyId(id);
     }
 
     @PutMapping("{id}")
-    public Faculty edit(@PathVariable long id, @RequestBody Faculty faculty) {
+    public Faculty edit(@PathVariable Long id, @RequestBody Faculty faculty) {
         return service.edit(id, faculty);
     }
 
     @DeleteMapping("{id}")
-    public void remove(@PathVariable long id) {
+    public void remove(@PathVariable Long id) {
         service.remove(id);
     }
 }

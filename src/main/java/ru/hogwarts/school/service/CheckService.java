@@ -10,6 +10,14 @@ public interface CheckService {
 
     boolean validateCheck(Faculty faculty);
 
+    boolean validateCheck(Long value);
+
+    boolean validateCheck(Long minValue, Long maxValue);
+
+    boolean validateCheck(String str);
+
+    boolean validateCheck(String strOne, String strTwo);
+
     boolean isStudentAlreadyAdded(Collection<Student> students, Student student);
 
     boolean isFacultyAlreadyAdded(Collection<Faculty> faculties, Faculty faculty);

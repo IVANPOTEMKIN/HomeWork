@@ -93,7 +93,7 @@ class StudentServiceImplTest {
 
     @Test
     void getByAge_success() {
-        when(repository.findAllByAge(AGE)).thenReturn(getStudents());
+        when(repository.findByAge(AGE)).thenReturn(getStudents());
         assertEquals(getStudents(), studentService.getByAge(AGE));
     }
 }

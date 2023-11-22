@@ -45,6 +45,39 @@ public class CheckServiceImplTest {
         );
     }
 
+    public static Stream<Arguments> provideParamsForValueTest() {
+        return Stream.of(
+                Arguments.of(-10),
+                Arguments.of(0)
+        );
+    }
+
+    public static Stream<Arguments> provideParamsForAgeBetweenMinAndMaxTest() {
+        return Stream.of(
+                Arguments.of(-10, MAX_VALUE),
+                Arguments.of(MIN_VALUE, -10),
+                Arguments.of(MIN_VALUE, 0),
+                Arguments.of(MIN_VALUE, MIN_VALUE - 1),
+                Arguments.of(MIN_VALUE, MIN_VALUE)
+        );
+    }
+
+    public static Stream<Arguments> provideParamsForStrTest_success() {
+        return Stream.of(
+                Arguments.of(GRIFFINDOR.getName()),
+                Arguments.of(GRIFFINDOR.getColor())
+        );
+    }
+
+    public static Stream<Arguments> provideParamsForStrTest_Exception() {
+        return Stream.of(
+                Arguments.of((Object) null),
+                Arguments.of(" "),
+                Arguments.of("Гриффиндор_1"),
+                Arguments.of("красный_1")
+        );
+    }
+
     @Test
     void validateCheckStudent_success() {
         assertFalse(service.validateCheck(HARRY));
@@ -53,6 +86,22 @@ public class CheckServiceImplTest {
     @Test
     void validateCheckFaculty_success() {
         assertFalse(service.validateCheck(GRIFFINDOR));
+    }
+
+    @Test
+    void validateCheckValue_success() {
+        assertFalse(service.validateCheck(AGE));
+    }
+
+    @Test
+    void validateCheckAgeBetweenMinAndMax_success() {
+        assertFalse(service.validateCheck(MIN_VALUE, MAX_VALUE));
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideParamsForStrTest_success")
+    void validateCheckStr_success(String str) {
+        assertFalse(service.validateCheck(str));
     }
 
     @ParameterizedTest
@@ -78,6 +127,48 @@ public class CheckServiceImplTest {
         Exception actual = assertThrows(
                 InvalideInputException.class,
                 () -> service.validateCheck(faculty)
+        );
+
+        assertEquals(expected, actual.getMessage());
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideParamsForValueTest")
+    void validateCheckAge_InvalideInputException(int value) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        String expected = status.value() + " Введены некорректные данные!";
+
+        Exception actual = assertThrows(
+                InvalideInputException.class,
+                () -> service.validateCheck(value)
+        );
+
+        assertEquals(expected, actual.getMessage());
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideParamsForAgeBetweenMinAndMaxTest")
+    void validateCheckAge_InvalideInputException(int minValue, int maxValue) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        String expected = status.value() + " Введены некорректные данные!";
+
+        Exception actual = assertThrows(
+                InvalideInputException.class,
+                () -> service.validateCheck(minValue, maxValue)
+        );
+
+        assertEquals(expected, actual.getMessage());
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideParamsForStrTest_Exception")
+    void validateCheckStr_InvalideInputException(String str) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        String expected = status.value() + " Введены некорректные данные!";
+
+        Exception actual = assertThrows(
+                InvalideInputException.class,
+                () -> service.validateCheck(str)
         );
 
         assertEquals(expected, actual.getMessage());

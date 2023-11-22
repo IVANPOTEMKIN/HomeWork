@@ -8,6 +8,9 @@ import java.util.List;
 
 public class Examples {
 
+    public static final int MIN_VALUE = 10;
+    public static final int MAX_VALUE = 16;
+
     public static final List<Student> STUDENTS = new ArrayList<>();
     public static final List<Faculty> FACULTIES = new ArrayList<>();
 
