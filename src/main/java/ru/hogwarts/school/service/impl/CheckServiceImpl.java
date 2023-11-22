@@ -4,7 +4,6 @@ import org.springframework.stereotype.Service;
 import ru.hogwarts.school.exception.FacultyAlreadyAddedException;
 import ru.hogwarts.school.exception.InvalideInputException;
 import ru.hogwarts.school.exception.StudentAlreadyAddedException;
-import ru.hogwarts.school.exception.StudentNotFoundException;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.CheckService;
@@ -58,26 +57,6 @@ public class CheckServiceImpl implements CheckService {
             if (element.getName().equalsIgnoreCase(faculty.getName())
                     && element.getColor().equalsIgnoreCase(faculty.getColor())) {
                 throw new FacultyAlreadyAddedException();
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public boolean isNotStudentContains(Collection<Student> students, long id) {
-        for (Student student : students) {
-            if (student.getId() != id) {
-                throw new StudentNotFoundException();
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public boolean isNotFacultyContains(Collection<Faculty> faculties, long id) {
-        for (Faculty faculty : faculties) {
-            if (faculty.getId() != id) {
-                throw new StudentNotFoundException();
             }
         }
         return false;

@@ -39,7 +39,6 @@ public class StudentServiceImpl implements StudentService {
         Student updateStudent = get(id);
 
         service.validateCheck(student);
-        updateStudent.setId(id);
         updateStudent.setName(student.getName());
         updateStudent.setAge(student.getAge());
 

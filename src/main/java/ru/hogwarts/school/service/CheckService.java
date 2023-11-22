@@ -13,8 +13,4 @@ public interface CheckService {
     boolean isStudentAlreadyAdded(Collection<Student> students, Student student);
 
     boolean isFacultyAlreadyAdded(Collection<Faculty> faculties, Faculty faculty);
-
-    boolean isNotStudentContains(Collection<Student> students, long id);
-
-    boolean isNotFacultyContains(Collection<Faculty> faculties, long id);
 }

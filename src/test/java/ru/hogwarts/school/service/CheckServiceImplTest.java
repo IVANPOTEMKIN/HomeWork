@@ -5,7 +5,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.http.HttpStatus;
-import ru.hogwarts.school.exception.*;
+import ru.hogwarts.school.exception.FacultyAlreadyAddedException;
+import ru.hogwarts.school.exception.InvalideInputException;
+import ru.hogwarts.school.exception.StudentAlreadyAddedException;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.impl.CheckServiceImpl;
@@ -112,42 +114,6 @@ public class CheckServiceImplTest {
         Exception actual = assertThrows(
                 FacultyAlreadyAddedException.class,
                 () -> service.isFacultyAlreadyAdded(getFaculties(), GRIFFINDOR)
-        );
-
-        assertEquals(expected, actual.getMessage());
-    }
-
-    @Test
-    void isNotStudentContains_success() {
-        assertFalse(service.isNotStudentContains(getStudents(), HARRY.getId()));
-    }
-
-    @Test
-    void isNotFacultyContains_success() {
-        assertFalse(service.isNotFacultyContains(getFaculties(), GRIFFINDOR.getId()));
-    }
-
-    @Test
-    void isNotStudentContains_StudentNotFoundException() {
-        HttpStatus status = HttpStatus.NOT_FOUND;
-        String expected = status.value() + " Студент не найден!";
-
-        Exception actual = assertThrows(
-                StudentNotFoundException.class,
-                () -> service.isNotStudentContains(getStudents(), DRACO.getId())
-        );
-
-        assertEquals(expected, actual.getMessage());
-    }
-
-    @Test
-    void isNotFacultyContains_FacultyNotFoundException() {
-        HttpStatus status = HttpStatus.NOT_FOUND;
-        String expected = status.value() + " Факультет не найден!";
-
-        Exception actual = assertThrows(
-                FacultyNotFoundException.class,
-                () -> service.isNotFacultyContains(getFaculties(), HUFFLEPUFF.getId())
         );
 
         assertEquals(expected, actual.getMessage());
