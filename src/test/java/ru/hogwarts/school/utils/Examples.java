@@ -14,8 +14,8 @@ public class Examples {
     public static final List<Student> STUDENTS = new ArrayList<>();
     public static final List<Faculty> FACULTIES = new ArrayList<>();
 
-    public static final Student HARRY = new Student(1, "Гарри", 12);
-    public static final Student RON = new Student(2, "Рон", 12);
+    public static final Student HARRY = new Student(1L, "Гарри", 12L);
+    public static final Student RON = new Student(2L, "Рон", 12L);
     public static final Student HERMIONE = new Student(3, "Гермиона", 12);
     public static final Student DRACO = new Student(4, "Драко", 12);
 
