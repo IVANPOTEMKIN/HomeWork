@@ -28,7 +28,7 @@ public class FacultyController {
     }
 
     @GetMapping("{id}")
-    public Faculty get(@PathVariable long id) {
+    public Faculty get(@PathVariable Long id) {
         return service.get(id);
     }
 
@@ -38,17 +38,17 @@ public class FacultyController {
     }
 
     @GetMapping(params = "color")
-    public Collection<Faculty> getByAge(@RequestParam String color) {
+    public Collection<Faculty> getByColor(@RequestParam String color) {
         return service.getByColor(color);
     }
 
     @PutMapping("{id}")
-    public Faculty edit(@PathVariable long id, @RequestBody Faculty faculty) {
+    public Faculty edit(@PathVariable Long id, @RequestBody Faculty faculty) {
         return service.edit(id, faculty);
     }
 
     @DeleteMapping("{id}")
-    public void remove(@PathVariable long id) {
+    public void remove(@PathVariable Long id) {
         service.remove(id);
     }
 }

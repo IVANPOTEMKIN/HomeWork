@@ -30,12 +30,13 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Student get(long id) {
+    public Student get(Long id) {
+        service.validateCheck(id);
         return repository.findById(id).orElseThrow(StudentNotFoundException::new);
     }
 
     @Override
-    public Student edit(long id, Student student) {
+    public Student edit(Long id, Student student) {
         Student updateStudent = get(id);
 
         service.validateCheck(student);
@@ -46,7 +47,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public void remove(long id) {
+    public void remove(Long id) {
         Student deleteStudent = get(id);
         repository.deleteById(deleteStudent.getId());
     }
@@ -57,7 +58,8 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Collection<Student> getByAge(int age) {
-        return repository.findAllByAge(age);
+    public Collection<Student> getByAge(Integer age) {
+        service.validateCheck(age);
+        return repository.findByAge(age);
     }
 }

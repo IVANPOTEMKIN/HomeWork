@@ -7,13 +7,13 @@ import java.util.Collection;
 public interface StudentService {
     Student add(Student student);
 
-    Student get(long id);
+    Student get(Long id);
 
-    Student edit(long id, Student student);
+    Student edit(Long id, Student student);
 
-    void remove(long id);
+    void remove(Long id);
 
     Collection<Student> getAll();
 
-    Collection<Student> getByAge(int age);
+    Collection<Student> getByAge(Integer age);
 }

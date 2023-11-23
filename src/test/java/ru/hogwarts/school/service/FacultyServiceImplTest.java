@@ -12,6 +12,7 @@ import ru.hogwarts.school.exception.InvalideInputException;
 import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.service.impl.FacultyServiceImpl;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -32,9 +33,6 @@ class FacultyServiceImplTest {
     @BeforeEach
     public void setUp() {
         facultyService = new FacultyServiceImpl(repository, checkService);
-        facultyService.add(GRIFFINDOR);
-        facultyService.add(SLYTHERIN);
-        facultyService.add(RAVENCLAW);
     }
 
     @Test
@@ -45,13 +43,13 @@ class FacultyServiceImplTest {
 
     @Test
     void add_InvalideInputException() {
-        when(checkService.validateCheck(INVALIDE_FACULTY)).thenThrow(InvalideInputException.class);
+        when(repository.save(INVALIDE_FACULTY)).thenThrow(InvalideInputException.class);
         assertThrows(InvalideInputException.class, () -> facultyService.add(INVALIDE_FACULTY));
     }
 
     @Test
     void add_FacultyAlreadyAddedException() {
-        when(checkService.isFacultyAlreadyAdded(getFaculties(), GRIFFINDOR)).thenThrow(FacultyAlreadyAddedException.class);
+        when(repository.save(GRIFFINDOR)).thenThrow(FacultyAlreadyAddedException.class);
         assertThrows(FacultyAlreadyAddedException.class, () -> facultyService.add(GRIFFINDOR));
     }
 
@@ -62,6 +60,12 @@ class FacultyServiceImplTest {
     }
 
     @Test
+    void get_InvalideInputException() {
+        when(repository.findById(INVALIDE_FACULTY.getId())).thenThrow(InvalideInputException.class);
+        assertThrows(InvalideInputException.class, () -> facultyService.get(INVALIDE_FACULTY.getId()));
+    }
+
+    @Test
     void get_FacultyNotFoundException() {
         when(repository.findById(HUFFLEPUFF.getId())).thenThrow(FacultyNotFoundException.class);
         assertThrows(FacultyNotFoundException.class, () -> facultyService.get(HUFFLEPUFF.getId()));
@@ -69,6 +73,7 @@ class FacultyServiceImplTest {
 
     @Test
     void edit_success() {
+        when(repository.findById(GRIFFINDOR.getId())).thenReturn(Optional.of(GRIFFINDOR));
         when(repository.save(EDIT_FACULTY)).thenReturn(EDIT_FACULTY);
         assertEquals(EDIT_FACULTY, facultyService.edit(GRIFFINDOR.getId(), HUFFLEPUFF));
     }
@@ -81,8 +86,9 @@ class FacultyServiceImplTest {
 
     @Test
     void remove_success() {
+        when(repository.findById(GRIFFINDOR.getId())).thenReturn(Optional.of(GRIFFINDOR));
         facultyService.remove(GRIFFINDOR.getId());
-        verify(repository, only()).deleteById(GRIFFINDOR.getId());
+        verify(repository, times(1)).deleteById(GRIFFINDOR.getId());
     }
 
     @Test
@@ -92,8 +98,8 @@ class FacultyServiceImplTest {
     }
 
     @Test
-    void getByAge_success() {
-        when(repository.findAllByColor(COLOR)).thenReturn(getFaculties());
-        assertEquals(getFaculties(), facultyService.getByColor(COLOR));
+    void getByColor_success() {
+        when(repository.findByColor(GRIFFINDOR.getColor())).thenReturn(List.of(GRIFFINDOR));
+        assertEquals(List.of(GRIFFINDOR), facultyService.getByColor(GRIFFINDOR.getColor()));
     }
 }

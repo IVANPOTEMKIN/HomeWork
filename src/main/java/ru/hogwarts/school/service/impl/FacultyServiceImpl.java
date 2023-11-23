@@ -30,12 +30,13 @@ public class FacultyServiceImpl implements FacultyService {
     }
 
     @Override
-    public Faculty get(long id) {
+    public Faculty get(Long id) {
+        service.validateCheck(id);
         return repository.findById(id).orElseThrow(FacultyNotFoundException::new);
     }
 
     @Override
-    public Faculty edit(long id, Faculty faculty) {
+    public Faculty edit(Long id, Faculty faculty) {
         Faculty updateFaculty = get(id);
 
         service.validateCheck(faculty);
@@ -46,7 +47,7 @@ public class FacultyServiceImpl implements FacultyService {
     }
 
     @Override
-    public void remove(long id) {
+    public void remove(Long id) {
         Faculty deleteFaculty = get(id);
         repository.deleteById(deleteFaculty.getId());
     }
@@ -58,6 +59,7 @@ public class FacultyServiceImpl implements FacultyService {
 
     @Override
     public Collection<Faculty> getByColor(String color) {
-        return repository.findAllByColor(color);
+        service.validateCheck(color);
+        return repository.findByColor(color);
     }
 }

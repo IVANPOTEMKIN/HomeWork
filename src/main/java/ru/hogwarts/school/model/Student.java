@@ -13,25 +13,25 @@ public class Student {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     private String name;
-    private int age;
+    private Integer age;
 
     public Student() {
     }
 
-    public Student(long id, String name, int age) {
+    public Student(Long id, String name, Integer age) {
         this.id = id;
         this.name = name;
         this.age = age;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
-        if (id >= 0) {
+    public void setId(Long id) {
+        if (id != null && id >= 0) {
             this.id = id;
             return;
         }
@@ -43,19 +43,21 @@ public class Student {
     }
 
     public void setName(String name) {
-        if (name.matches("[а-яА-Я]+")) {
+        if (name != null
+                && !name.isBlank()
+                && name.matches("[а-яА-Я ]+")) {
             this.name = name;
             return;
         }
         throw new InvalideInputException();
     }
 
-    public int getAge() {
+    public Integer getAge() {
         return age;
     }
 
-    public void setAge(int age) {
-        if (age > 0) {
+    public void setAge(Integer age) {
+        if (age != null && age > 0) {
             this.age = age;
             return;
         }
@@ -67,7 +69,9 @@ public class Student {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
         Student student = (Student) object;
-        return age == student.age && Objects.equals(id, student.id) && Objects.equals(name, student.name);
+        return Objects.equals(id, student.id)
+                && Objects.equals(name, student.name)
+                && Objects.equals(age, student.age);
     }
 
     @Override

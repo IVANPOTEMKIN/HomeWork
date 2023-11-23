@@ -12,6 +12,7 @@ import ru.hogwarts.school.exception.StudentNotFoundException;
 import ru.hogwarts.school.repository.StudentRepository;
 import ru.hogwarts.school.service.impl.StudentServiceImpl;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -32,9 +33,6 @@ class StudentServiceImplTest {
     @BeforeEach
     public void setUp() {
         studentService = new StudentServiceImpl(repository, checkService);
-        studentService.add(HARRY);
-        studentService.add(RON);
-        studentService.add(HERMIONE);
     }
 
     @Test
@@ -45,13 +43,13 @@ class StudentServiceImplTest {
 
     @Test
     void add_InvalideInputException() {
-        when(checkService.validateCheck(INVALIDE_STUDENT)).thenThrow(InvalideInputException.class);
+        when(repository.save(INVALIDE_STUDENT)).thenThrow(InvalideInputException.class);
         assertThrows(InvalideInputException.class, () -> studentService.add(INVALIDE_STUDENT));
     }
 
     @Test
     void add_StudentAlreadyAddedException() {
-        when(checkService.isStudentAlreadyAdded(getStudents(), HARRY)).thenThrow(StudentAlreadyAddedException.class);
+        when(repository.save(HARRY)).thenThrow(StudentAlreadyAddedException.class);
         assertThrows(StudentAlreadyAddedException.class, () -> studentService.add(HARRY));
     }
 
@@ -62,6 +60,12 @@ class StudentServiceImplTest {
     }
 
     @Test
+    void get_InvalideInputException() {
+        when(repository.findById(INVALIDE_STUDENT.getId())).thenThrow(InvalideInputException.class);
+        assertThrows(InvalideInputException.class, () -> studentService.get(INVALIDE_STUDENT.getId()));
+    }
+
+    @Test
     void get_StudentNotFoundException() {
         when(repository.findById(DRACO.getId())).thenThrow(StudentNotFoundException.class);
         assertThrows(StudentNotFoundException.class, () -> studentService.get(DRACO.getId()));
@@ -69,6 +73,7 @@ class StudentServiceImplTest {
 
     @Test
     void edit_success() {
+        when(repository.findById(HARRY.getId())).thenReturn(Optional.of(HARRY));
         when(repository.save(EDIT_STUDENT)).thenReturn(EDIT_STUDENT);
         assertEquals(EDIT_STUDENT, studentService.edit(HARRY.getId(), DRACO));
     }
@@ -81,8 +86,9 @@ class StudentServiceImplTest {
 
     @Test
     void remove_success() {
+        when(repository.findById(HARRY.getId())).thenReturn(Optional.of(HARRY));
         studentService.remove(HARRY.getId());
-        verify(repository, only()).deleteById(HARRY.getId());
+        verify(repository, times(1)).deleteById(HARRY.getId());
     }
 
     @Test
@@ -93,7 +99,7 @@ class StudentServiceImplTest {
 
     @Test
     void getByAge_success() {
-        when(repository.findAllByAge(AGE)).thenReturn(getStudents());
-        assertEquals(getStudents(), studentService.getByAge(AGE));
+        when(repository.findByAge(HARRY.getAge())).thenReturn(List.of(HARRY));
+        assertEquals(List.of(HARRY), studentService.getByAge(HARRY.getAge()));
     }
 }

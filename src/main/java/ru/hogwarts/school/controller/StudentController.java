@@ -28,7 +28,7 @@ public class StudentController {
     }
 
     @GetMapping("{id}")
-    public Student get(@PathVariable long id) {
+    public Student get(@PathVariable Long id) {
         return service.get(id);
     }
 
@@ -38,17 +38,17 @@ public class StudentController {
     }
 
     @GetMapping(params = "age")
-    public Collection<Student> getByAge(@RequestParam int age) {
+    public Collection<Student> getByAge(@RequestParam Integer age) {
         return service.getByAge(age);
     }
 
     @PutMapping("{id}")
-    public Student edit(@PathVariable long id, @RequestBody Student student) {
+    public Student edit(@PathVariable Long id, @RequestBody Student student) {
         return service.edit(id, student);
     }
 
     @DeleteMapping("{id}")
-    public void remove(@PathVariable long id) {
+    public void remove(@PathVariable Long id) {
         service.remove(id);
     }
 }
