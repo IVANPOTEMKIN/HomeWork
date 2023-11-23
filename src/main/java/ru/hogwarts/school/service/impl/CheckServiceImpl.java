@@ -21,7 +21,8 @@ public class CheckServiceImpl implements CheckService {
                 || student.getAge() == null
                 || student.getAge() <= 0
                 || student.getId() == null
-                || student.getId() < 0) {
+                || student.getId() < 0
+                || validateCheck(student.getFaculty())) {
             throw new InvalideInputException();
         }
         return false;
@@ -36,9 +37,10 @@ public class CheckServiceImpl implements CheckService {
                 || faculty.getColor() == null
                 || faculty.getColor().isBlank()
                 || !faculty.getColor().matches("[а-яА-Я -]+")
-                || faculty.getColor().equalsIgnoreCase(faculty.getName())
+                || faculty.getName().equalsIgnoreCase(faculty.getColor())
                 || faculty.getId() == null
-                || faculty.getId() < 0) {
+                || faculty.getId() < 0
+                || faculty.getStudents() == null) {
             throw new InvalideInputException();
         }
         return false;
@@ -53,7 +55,15 @@ public class CheckServiceImpl implements CheckService {
     }
 
     @Override
-    public boolean validateCheck(Long minValue, Long maxValue) {
+    public boolean validateCheck(Integer value) {
+        if (value == null || value <= 0) {
+            throw new InvalideInputException();
+        }
+        return false;
+    }
+
+    @Override
+    public boolean validateCheck(Integer minValue, Integer maxValue) {
         if (minValue == null
                 || minValue <= 0
                 || maxValue == null
@@ -75,14 +85,14 @@ public class CheckServiceImpl implements CheckService {
     }
 
     @Override
-    public boolean validateCheck(String strOne, String strTwo) {
-        if (strOne == null
-                || strOne.isBlank()
-                || !strOne.matches("[а-яА-Я -]+")
-                || strTwo == null
-                || strTwo.isBlank()
-                || !strTwo.matches("[а-яА-Я -]+")
-                || strOne.equalsIgnoreCase(strTwo)) {
+    public boolean validateCheck(String str1, String str2) {
+        if (str1 == null
+                || str1.isBlank()
+                || !str1.matches("[а-яА-Я -]+")
+                || str2 == null
+                || str2.isBlank()
+                || !str2.matches("[а-яА-Я -]+")
+                || str1.equalsIgnoreCase(str2)) {
             throw new InvalideInputException();
         }
         return false;

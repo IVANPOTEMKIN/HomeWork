@@ -12,11 +12,13 @@ public interface CheckService {
 
     boolean validateCheck(Long value);
 
-    boolean validateCheck(Long minValue, Long maxValue);
+    boolean validateCheck(Integer value);
+
+    boolean validateCheck(Integer minValue, Integer maxValue);
 
     boolean validateCheck(String str);
 
-    boolean validateCheck(String strOne, String strTwo);
+    boolean validateCheck(String str1, String str2);
 
     boolean isStudentAlreadyAdded(Collection<Student> students, Student student);
 

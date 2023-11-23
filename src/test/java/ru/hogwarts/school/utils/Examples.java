@@ -8,32 +8,27 @@ import java.util.List;
 
 public class Examples {
 
-    public static final int MIN_VALUE = 10;
-    public static final int MAX_VALUE = 16;
-
     public static final List<Student> STUDENTS = new ArrayList<>();
+
+    public static final Student HARRY = new Student(1L, "Гарри Поттер", 12, new Faculty());
+    public static final Student RON = new Student(2L, "Рон Уизли", 12, new Faculty());
+    public static final Student HERMIONE = new Student(3L, "Гермиона Грейнджер", 13, new Faculty());
+    public static final Student DRACO = new Student(4L, "Драко Малфой", 13, new Faculty());
+
+    public static final Student EDIT_STUDENT = new Student(HARRY.getId(), DRACO.getName(), DRACO.getAge(), new Faculty());
+    public static final Student INVALIDE_STUDENT = new Student(null, null, null, null);
+
+
     public static final List<Faculty> FACULTIES = new ArrayList<>();
 
-    public static final Student HARRY = new Student(1L, "Гарри", 12L);
-    public static final Student RON = new Student(2L, "Рон", 12L);
-    public static final Student HERMIONE = new Student(3, "Гермиона", 12);
-    public static final Student DRACO = new Student(4, "Драко", 12);
+    public static final Faculty GRIFFINDOR = new Faculty(1L, "Гриффиндор", "красно-золотой", List.of(HARRY, RON, HERMIONE));
+    public static final Faculty SLYTHERIN = new Faculty(2L, "Слизерин", "зеленый и серебряный", List.of(DRACO));
+    public static final Faculty RAVENCLAW = new Faculty(3L, "Когтевран", "синий и коричневый", List.of());
+    public static final Faculty HUFFLEPUFF = new Faculty(4L, "Пуффендуй", "черно-желтый", List.of());
 
-    public static final int AGE = 12;
+    public static final Faculty EDIT_FACULTY = new Faculty(GRIFFINDOR.getId(), HUFFLEPUFF.getName(), HUFFLEPUFF.getColor(), HUFFLEPUFF.getStudents());
+    public static final Faculty INVALIDE_FACULTY = new Faculty(null, null, null, List.of(INVALIDE_STUDENT));
 
-    public static final Student EDIT_STUDENT = new Student(HARRY.getId(), DRACO.getName(), DRACO.getAge());
-    public static final Student INVALIDE_STUDENT = new Student(-1, null, 0);
-
-
-    public static final Faculty GRIFFINDOR = new Faculty(1, "Гриффиндор", "красный");
-    public static final Faculty SLYTHERIN = new Faculty(2, "Слизерин", "зеленый");
-    public static final Faculty RAVENCLAW = new Faculty(3, "Когтевран", "синий");
-    public static final Faculty HUFFLEPUFF = new Faculty(4, "Пуффендуй", "желтый");
-
-    public static final String COLOR = "красный";
-
-    public static final Faculty EDIT_FACULTY = new Faculty(GRIFFINDOR.getId(), HUFFLEPUFF.getName(), HUFFLEPUFF.getColor());
-    public static final Faculty INVALIDE_FACULTY = new Faculty(-1, null, null);
 
     public static List<Student> getStudents() {
         STUDENTS.add(HARRY);

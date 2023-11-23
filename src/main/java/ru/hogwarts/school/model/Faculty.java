@@ -72,10 +72,7 @@ public class Faculty {
     }
 
     public void setStudents(Collection<Student> students) {
-        if (students != null) {
-            this.students = students;
-        }
-        throw new InvalideInputException();
+        this.students = students;
     }
 
     @Override
@@ -100,6 +97,7 @@ public class Faculty {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", color='" + color + '\'' +
+                ", students=" + students +
                 '}';
     }
 }

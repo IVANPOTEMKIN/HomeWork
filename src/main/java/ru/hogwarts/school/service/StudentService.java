@@ -16,7 +16,7 @@ public interface StudentService {
 
     Collection<Student> getAll();
 
-    Collection<Student> getByAge(Long minValue, Long maxValue);
+    Collection<Student> getByAge(Integer minAge, Integer maxAge);
 
     Faculty getFacultyById(Long id);
 }

@@ -12,7 +12,7 @@ public class Student {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private Long age;
+    private Integer age;
     @ManyToOne
     @JoinColumn(name = "faculty_id")
     private Faculty faculty;
@@ -20,7 +20,7 @@ public class Student {
     public Student() {
     }
 
-    public Student(Long id, String name, Long age, Faculty faculty) {
+    public Student(Long id, String name, Integer age, Faculty faculty) {
         this.id = id;
         this.name = name;
         this.age = age;
@@ -53,11 +53,11 @@ public class Student {
         throw new InvalideInputException();
     }
 
-    public Long getAge() {
+    public Integer getAge() {
         return age;
     }
 
-    public void setAge(Long age) {
+    public void setAge(Integer age) {
         if (age != null && age > 0) {
             this.age = age;
             return;
@@ -70,20 +70,7 @@ public class Student {
     }
 
     public void setFaculty(Faculty faculty) {
-        if (faculty != null
-                && faculty.getName() != null
-                && !faculty.getName().isBlank()
-                && faculty.getName().matches("[а-яА-Я ]+")
-                && faculty.getColor() != null
-                && !faculty.getColor().isBlank()
-                && faculty.getColor().matches("[а-яА-Я -]+")
-                && !faculty.getName().equalsIgnoreCase(faculty.getColor())
-                && faculty.getId() != null
-                && faculty.getId() >= 0) {
-            this.faculty = faculty;
-            return;
-        }
-        throw new InvalideInputException();
+        this.faculty = faculty;
     }
 
     @Override
@@ -108,6 +95,7 @@ public class Student {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", age=" + age +
+                ", faculty=" + faculty +
                 '}';
     }
 }

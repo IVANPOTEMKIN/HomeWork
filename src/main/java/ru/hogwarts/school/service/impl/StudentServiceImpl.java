@@ -43,6 +43,7 @@ public class StudentServiceImpl implements StudentService {
         service.validateCheck(student);
         updateStudent.setName(student.getName());
         updateStudent.setAge(student.getAge());
+        updateStudent.setFaculty(student.getFaculty());
 
         return repository.save(updateStudent);
     }
@@ -59,18 +60,18 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Collection<Student> getByAge(Long minValue, Long maxValue) {
-        if (minValue != null & maxValue == null) {
-            service.validateCheck(minValue);
-            return repository.findByAge(minValue);
+    public Collection<Student> getByAge(Integer minAge, Integer maxAge) {
+        if (minAge != null & maxAge == null) {
+            service.validateCheck(minAge);
+            return repository.findByAge(minAge);
         }
-        if (minValue == null & maxValue != null) {
-            service.validateCheck(maxValue);
-            return repository.findByAge(maxValue);
+        if (minAge == null & maxAge != null) {
+            service.validateCheck(maxAge);
+            return repository.findByAge(maxAge);
         }
-        if (minValue != null & maxValue != null) {
-            service.validateCheck(minValue, maxValue);
-            return repository.findByAgeBetween(minValue, maxValue);
+        if (minAge != null & maxAge != null) {
+            service.validateCheck(minAge, maxAge);
+            return repository.findByAgeBetween(minAge, maxAge);
         }
         return repository.findAll();
     }

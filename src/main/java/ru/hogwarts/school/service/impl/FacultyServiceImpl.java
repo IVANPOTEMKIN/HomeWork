@@ -43,6 +43,7 @@ public class FacultyServiceImpl implements FacultyService {
         service.validateCheck(faculty);
         updateFaculty.setName(faculty.getName());
         updateFaculty.setColor(faculty.getColor());
+        updateFaculty.setStudents(faculty.getStudents());
 
         return repository.save(updateFaculty);
     }

@@ -39,9 +39,9 @@ public class StudentController {
     }
 
     @GetMapping
-    public Collection<Student> getByAge(@RequestParam(required = false) Long minValue,
-                                        @RequestParam(required = false) Long maxValue) {
-        return service.getByAge(minValue, maxValue);
+    public Collection<Student> getByAge(@RequestParam(required = false) Integer minAge,
+                                        @RequestParam(required = false) Integer maxAge) {
+        return service.getByAge(minAge, maxAge);
     }
 
     @GetMapping(params = "id")
