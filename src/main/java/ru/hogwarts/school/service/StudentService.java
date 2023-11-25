@@ -12,7 +12,7 @@ public interface StudentService {
 
     Student edit(Long id, Student student);
 
-    void remove(Long id);
+    Student remove(Long id);
 
     Collection<Student> getAll();
 

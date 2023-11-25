@@ -16,7 +16,6 @@ public class Examples {
     public static final Student DRACO = new Student(4L, "Драко Малфой", 13, new Faculty());
 
     public static final Student EDIT_STUDENT = new Student(HARRY.getId(), DRACO.getName(), DRACO.getAge(), new Faculty());
-    public static final Student INVALIDE_STUDENT = new Student(null, null, null, null);
 
 
     public static final List<Faculty> FACULTIES = new ArrayList<>();
@@ -27,7 +26,6 @@ public class Examples {
     public static final Faculty HUFFLEPUFF = new Faculty(4L, "Пуффендуй", "черно-желтый", List.of());
 
     public static final Faculty EDIT_FACULTY = new Faculty(GRIFFINDOR.getId(), HUFFLEPUFF.getName(), HUFFLEPUFF.getColor(), HUFFLEPUFF.getStudents());
-    public static final Faculty INVALIDE_FACULTY = new Faculty(null, null, null, List.of(INVALIDE_STUDENT));
 
 
     public static List<Student> getStudents() {
