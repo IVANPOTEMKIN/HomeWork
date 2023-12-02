@@ -17,7 +17,7 @@ public class CheckServiceImpl implements CheckService {
         if (student == null
                 || validateCheck(student.getName())
                 || validateCheck(student.getAge())
-                || validateCheck(student.getFaculty().getId())) {
+                || validateCheck(student.getFaculty())) {
             throw new InvalideInputException();
         }
         return false;
@@ -50,9 +50,9 @@ public class CheckServiceImpl implements CheckService {
 
     @Override
     public boolean validateCheck(Integer minValue, Integer maxValue) {
-        if (maxValue < minValue
-                || validateCheck(minValue)
-                || validateCheck(maxValue)) {
+        if (validateCheck(minValue)
+                || validateCheck(maxValue)
+                || maxValue < minValue) {
             throw new InvalideInputException();
         }
         return false;
@@ -70,9 +70,9 @@ public class CheckServiceImpl implements CheckService {
 
     @Override
     public boolean validateCheck(String str1, String str2) {
-        if (str1.equalsIgnoreCase(str2)
-                || validateCheck(str1)
-                || validateCheck(str2)) {
+        if (validateCheck(str1)
+                || validateCheck(str2)
+                || str1.equalsIgnoreCase(str2)) {
             throw new InvalideInputException();
         }
         return false;

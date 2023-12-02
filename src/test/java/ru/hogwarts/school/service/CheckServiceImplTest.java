@@ -12,7 +12,6 @@ import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.impl.CheckServiceImpl;
 
-import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,40 +24,33 @@ public class CheckServiceImplTest {
     public static Stream<Arguments> provideParamsForStudentTest() {
         return Stream.of(
                 Arguments.of((Object) null),
-                Arguments.of(new Student(HARRY.getId(), null, HARRY.getAge(), GRIFFINDOR)),
-                Arguments.of(new Student(HARRY.getId(), " ", HARRY.getAge(), GRIFFINDOR)),
-                Arguments.of(new Student(HARRY.getId(), "Гарри_1", HARRY.getAge(), GRIFFINDOR)),
-                Arguments.of(new Student(null, HARRY.getName(), HARRY.getAge(), GRIFFINDOR)),
-                Arguments.of(new Student(-1L, HARRY.getName(), HARRY.getAge(), GRIFFINDOR)),
-                Arguments.of(new Student(HARRY.getId(), HARRY.getName(), null, GRIFFINDOR)),
-                Arguments.of(new Student(HARRY.getId(), HARRY.getName(), 0, GRIFFINDOR)),
-                Arguments.of(new Student(HARRY.getId(), HARRY.getName(), 0, null)),
-                Arguments.of(new Student(HARRY.getId(), HARRY.getName(), 0, new Faculty(GRIFFINDOR.getId(), null, GRIFFINDOR.getColor(), List.of(HARRY, RON, HERMIONE)))),
-                Arguments.of(new Student(HARRY.getId(), HARRY.getName(), 0, new Faculty(GRIFFINDOR.getId(), " ", GRIFFINDOR.getColor(), List.of(HARRY, RON, HERMIONE)))),
-                Arguments.of(new Student(HARRY.getId(), HARRY.getName(), 0, new Faculty(GRIFFINDOR.getId(), "Гриффиндор_1", GRIFFINDOR.getColor(), List.of(HARRY, RON, HERMIONE)))),
-                Arguments.of(new Student(HARRY.getId(), HARRY.getName(), 0, new Faculty(GRIFFINDOR.getId(), GRIFFINDOR.getName(), null, List.of(HARRY, RON, HERMIONE)))),
-                Arguments.of(new Student(HARRY.getId(), HARRY.getName(), 0, new Faculty(GRIFFINDOR.getId(), GRIFFINDOR.getName(), " ", List.of(HARRY, RON, HERMIONE)))),
-                Arguments.of(new Student(HARRY.getId(), HARRY.getName(), 0, new Faculty(GRIFFINDOR.getId(), GRIFFINDOR.getName(), "красный_1", List.of(HARRY, RON, HERMIONE)))),
-                Arguments.of(new Student(HARRY.getId(), HARRY.getName(), 0, new Faculty(GRIFFINDOR.getId(), GRIFFINDOR.getName(), GRIFFINDOR.getName(), List.of(HARRY, RON, HERMIONE)))),
-                Arguments.of(new Student(HARRY.getId(), HARRY.getName(), 0, new Faculty(null, GRIFFINDOR.getName(), GRIFFINDOR.getColor(), List.of(HARRY, RON, HERMIONE)))),
-                Arguments.of(new Student(HARRY.getId(), HARRY.getName(), 0, new Faculty(-1L, GRIFFINDOR.getName(), GRIFFINDOR.getColor(), List.of(HARRY, RON, HERMIONE)))),
-                Arguments.of(new Student(HARRY.getId(), HARRY.getName(), HARRY.getAge(), new Faculty(GRIFFINDOR.getId(), GRIFFINDOR.getName(), GRIFFINDOR.getColor(), null)))
+                Arguments.of(new Student(null, HARRY.getAge(), GRIFFINDOR)),
+                Arguments.of(new Student(" ", HARRY.getAge(), GRIFFINDOR)),
+                Arguments.of(new Student("Гриффиндор_1", HARRY.getAge(), GRIFFINDOR)),
+                Arguments.of(new Student(HARRY.getName(), null, GRIFFINDOR)),
+                Arguments.of(new Student(HARRY.getName(), 0, GRIFFINDOR)),
+                Arguments.of(new Student(HARRY.getName(), -1, GRIFFINDOR)),
+                Arguments.of(new Student(HARRY.getName(), HARRY.getAge(), null)),
+                Arguments.of(new Student(HARRY.getName(), HARRY.getAge(), new Faculty(null, GRIFFINDOR.getColor()))),
+                Arguments.of(new Student(HARRY.getName(), HARRY.getAge(), new Faculty(" ", GRIFFINDOR.getColor()))),
+                Arguments.of(new Student(HARRY.getName(), HARRY.getAge(), new Faculty("Гриффиндор_1", GRIFFINDOR.getColor()))),
+                Arguments.of(new Student(HARRY.getName(), HARRY.getAge(), new Faculty(GRIFFINDOR.getName(), null))),
+                Arguments.of(new Student(HARRY.getName(), HARRY.getAge(), new Faculty(GRIFFINDOR.getName(), " "))),
+                Arguments.of(new Student(HARRY.getName(), HARRY.getAge(), new Faculty(GRIFFINDOR.getName(), "красно-золотой_1"))),
+                Arguments.of(new Student(HARRY.getName(), HARRY.getAge(), new Faculty(GRIFFINDOR.getColor(), GRIFFINDOR.getColor())))
         );
     }
 
     public static Stream<Arguments> provideParamsForFacultyTest() {
         return Stream.of(
                 Arguments.of((Object) null),
-                Arguments.of(new Faculty(GRIFFINDOR.getId(), null, GRIFFINDOR.getColor(), List.of(HARRY, RON, HERMIONE))),
-                Arguments.of(new Faculty(GRIFFINDOR.getId(), " ", GRIFFINDOR.getColor(), List.of(HARRY, RON, HERMIONE))),
-                Arguments.of(new Faculty(GRIFFINDOR.getId(), "Гриффиндор_1", GRIFFINDOR.getColor(), List.of(HARRY, RON, HERMIONE))),
-                Arguments.of(new Faculty(GRIFFINDOR.getId(), GRIFFINDOR.getName(), null, List.of(HARRY, RON, HERMIONE))),
-                Arguments.of(new Faculty(GRIFFINDOR.getId(), GRIFFINDOR.getName(), " ", List.of(HARRY, RON, HERMIONE))),
-                Arguments.of(new Faculty(GRIFFINDOR.getId(), GRIFFINDOR.getName(), "красный_1", List.of(HARRY, RON, HERMIONE))),
-                Arguments.of(new Faculty(GRIFFINDOR.getId(), GRIFFINDOR.getName(), GRIFFINDOR.getName(), List.of(HARRY, RON, HERMIONE))),
-                Arguments.of(new Faculty(null, GRIFFINDOR.getName(), GRIFFINDOR.getColor(), List.of(HARRY, RON, HERMIONE))),
-                Arguments.of(new Faculty(-1L, GRIFFINDOR.getName(), GRIFFINDOR.getColor(), List.of(HARRY, RON, HERMIONE))),
-                Arguments.of(new Faculty(GRIFFINDOR.getId(), GRIFFINDOR.getName(), GRIFFINDOR.getColor(), null))
+                Arguments.of(new Faculty(null, GRIFFINDOR.getColor())),
+                Arguments.of(new Faculty(" ", GRIFFINDOR.getColor())),
+                Arguments.of(new Faculty("Гриффиндор_1", GRIFFINDOR.getColor())),
+                Arguments.of(new Faculty(GRIFFINDOR.getName(), null)),
+                Arguments.of(new Faculty(GRIFFINDOR.getName(), " ")),
+                Arguments.of(new Faculty(GRIFFINDOR.getName(), "красно-золотой_1")),
+                Arguments.of(new Faculty(GRIFFINDOR.getName(), GRIFFINDOR.getName()))
         );
     }
 
@@ -83,10 +75,9 @@ public class CheckServiceImplTest {
                 Arguments.of(null, HARRY.getAge()),
                 Arguments.of(0, HARRY.getAge()),
                 Arguments.of(-1, HARRY.getAge()),
-                Arguments.of(HARRY.getAge(), null),
-                Arguments.of(HARRY.getAge(), 0),
-                Arguments.of(HARRY.getAge(), -1),
-                Arguments.of(HARRY.getAge(), HARRY.getAge()),
+                Arguments.of(HERMIONE.getAge(), null),
+                Arguments.of(HERMIONE.getAge(), 0),
+                Arguments.of(HERMIONE.getAge(), -1),
                 Arguments.of(HERMIONE.getAge(), HARRY.getAge())
         );
     }
@@ -95,7 +86,7 @@ public class CheckServiceImplTest {
         return Stream.of(
                 Arguments.of((Object) null),
                 Arguments.of(" "),
-                Arguments.of("красный_1")
+                Arguments.of("красно-золотой_1")
         );
     }
 
@@ -106,14 +97,14 @@ public class CheckServiceImplTest {
                 Arguments.of("Гриффиндор_1", GRIFFINDOR.getColor()),
                 Arguments.of(GRIFFINDOR.getName(), null),
                 Arguments.of(GRIFFINDOR.getName(), " "),
-                Arguments.of(GRIFFINDOR.getName(), "красный_1"),
+                Arguments.of(GRIFFINDOR.getName(), "красно-золотой_1"),
                 Arguments.of(GRIFFINDOR.getName(), GRIFFINDOR.getName())
         );
     }
 
     @Test
     void validateCheckStudent_success() {
-        Student HARRY = new Student(1L, "Гарри Поттер", 12, GRIFFINDOR);
+        HARRY.setFaculty(GRIFFINDOR);
         assertFalse(service.validateCheck(HARRY));
     }
 
@@ -124,7 +115,7 @@ public class CheckServiceImplTest {
 
     @Test
     void validateCheckLong_success() {
-        assertFalse(service.validateCheck(HARRY.getId()));
+        assertFalse(service.validateCheck(HARRY_ID));
     }
 
     @Test

@@ -79,17 +79,17 @@ public class FacultyServiceImpl implements FacultyService {
     public Collection<Faculty> getByNameOrColor(String name, String color) {
         if (name != null & color == null) {
             service.validateCheck(name);
-            return repository.findByNameIgnoreCase(name);
+            return repository.findByNameContainsIgnoreCase(name);
         }
 
         if (name == null & color != null) {
             service.validateCheck(color);
-            return repository.findByColorIgnoreCase(color);
+            return repository.findByColorContainsIgnoreCase(color);
         }
 
         if (name != null & color != null) {
             service.validateCheck(name, color);
-            return repository.findByNameIgnoreCaseAndColorIgnoreCase(name, color);
+            return repository.findByNameContainsIgnoreCaseAndColorContainsIgnoreCase(name, color);
         }
 
         return repository.findAll();
