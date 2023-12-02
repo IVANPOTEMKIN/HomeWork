@@ -1,5 +1,6 @@
 package ru.hogwarts.school.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import ru.hogwarts.school.exception.InvalideInputException;
 
 import javax.persistence.*;
@@ -15,16 +16,15 @@ public class Faculty {
     private String name;
     private String color;
     @OneToMany(mappedBy = "faculty")
+    @JsonIgnore
     private Collection<Student> students;
 
     public Faculty() {
     }
 
-    public Faculty(Long id, String name, String color, Collection<Student> students) {
-        this.id = id;
+    public Faculty(String name, String color) {
         this.name = name;
         this.color = color;
-        this.students = students;
     }
 
     public Long getId() {
@@ -32,7 +32,7 @@ public class Faculty {
     }
 
     public void setId(Long id) {
-        if (id != null && id >= 0) {
+        if (id != null && id > 0) {
             this.id = id;
             return;
         }
@@ -46,7 +46,8 @@ public class Faculty {
     public void setName(String name) {
         if (name != null
                 && !name.isBlank()
-                && name.matches("[а-яА-Я ]+")) {
+                && name.matches("[а-яА-Я -]+")
+                && !name.equalsIgnoreCase(getColor())) {
             this.name = name;
             return;
         }
@@ -60,7 +61,8 @@ public class Faculty {
     public void setColor(String color) {
         if (color != null
                 && !color.isBlank()
-                && color.matches("[а-яА-Я -]+")) {
+                && color.matches("[а-яА-Я -]+")
+                && !color.equalsIgnoreCase(getName())) {
             this.color = color;
             return;
         }

@@ -15,14 +15,9 @@ public class CheckServiceImpl implements CheckService {
     @Override
     public boolean validateCheck(Student student) {
         if (student == null
-                || student.getName() == null
-                || student.getName().isBlank()
-                || !student.getName().matches("[а-яА-Я ]+")
-                || student.getAge() == null
-                || student.getAge() <= 0
-                || student.getId() == null
-                || student.getId() < 0
-                || validateCheck(student.getFaculty())) {
+                || validateCheck(student.getName())
+                || validateCheck(student.getAge())
+                || validateCheck(student.getFaculty().getId())) {
             throw new InvalideInputException();
         }
         return false;
@@ -31,16 +26,7 @@ public class CheckServiceImpl implements CheckService {
     @Override
     public boolean validateCheck(Faculty faculty) {
         if (faculty == null
-                || faculty.getName() == null
-                || faculty.getName().isBlank()
-                || !faculty.getName().matches("[а-яА-Я ]+")
-                || faculty.getColor() == null
-                || faculty.getColor().isBlank()
-                || !faculty.getColor().matches("[а-яА-Я -]+")
-                || faculty.getName().equalsIgnoreCase(faculty.getColor())
-                || faculty.getId() == null
-                || faculty.getId() < 0
-                || faculty.getStudents() == null) {
+                || validateCheck(faculty.getName(), faculty.getColor())) {
             throw new InvalideInputException();
         }
         return false;
@@ -64,11 +50,9 @@ public class CheckServiceImpl implements CheckService {
 
     @Override
     public boolean validateCheck(Integer minValue, Integer maxValue) {
-        if (minValue == null
-                || minValue <= 0
-                || maxValue == null
-                || maxValue <= 0
-                || maxValue <= minValue) {
+        if (maxValue < minValue
+                || validateCheck(minValue)
+                || validateCheck(maxValue)) {
             throw new InvalideInputException();
         }
         return false;
@@ -86,13 +70,9 @@ public class CheckServiceImpl implements CheckService {
 
     @Override
     public boolean validateCheck(String str1, String str2) {
-        if (str1 == null
-                || str1.isBlank()
-                || !str1.matches("[а-яА-Я -]+")
-                || str2 == null
-                || str2.isBlank()
-                || !str2.matches("[а-яА-Я -]+")
-                || str1.equalsIgnoreCase(str2)) {
+        if (str1.equalsIgnoreCase(str2)
+                || validateCheck(str1)
+                || validateCheck(str2)) {
             throw new InvalideInputException();
         }
         return false;

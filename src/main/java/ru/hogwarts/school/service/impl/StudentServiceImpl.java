@@ -24,10 +24,12 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Student add(Student student) {
-        service.validateCheck(student);
-        service.isStudentAlreadyAdded(getAll(), student);
-        return repository.save(student);
+    public Student add(String name, Integer age, Long facultyId) {
+        Student newStudent = new Student(name, age, new Faculty());
+        newStudent.getFaculty().setId(facultyId);
+        service.validateCheck(newStudent);
+        service.isStudentAlreadyAdded(getAll(), newStudent);
+        return repository.save(newStudent);
     }
 
     @Override
@@ -37,14 +39,65 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Student edit(Long id, Student student) {
+    public Student edit(Long id, String name, Integer age, Long facultyId) {
         Student updateStudent = get(id);
 
-        service.validateCheck(student);
-        updateStudent.setName(student.getName());
-        updateStudent.setAge(student.getAge());
-        updateStudent.setFaculty(student.getFaculty());
+        if (name != null & age == null & facultyId == null) {
+            service.validateCheck(name);
+            updateStudent.setName(name);
+            return repository.save(updateStudent);
+        }
 
+        if (name != null & age != null & facultyId == null) {
+            service.validateCheck(name);
+            service.validateCheck(age);
+            updateStudent.setName(name);
+            updateStudent.setAge(age);
+            return repository.save(updateStudent);
+        }
+
+        if (name != null & age == null & facultyId != null) {
+            service.validateCheck(name);
+            service.validateCheck(facultyId);
+            updateStudent.setName(name);
+            updateStudent.setFaculty(new Faculty());
+            updateStudent.getFaculty().setId(facultyId);
+            return repository.save(updateStudent);
+        }
+
+        if (name == null & age != null & facultyId == null) {
+            service.validateCheck(age);
+            updateStudent.setAge(age);
+            return repository.save(updateStudent);
+        }
+
+        if (name == null & age != null & facultyId != null) {
+            service.validateCheck(age);
+            service.validateCheck(facultyId);
+            updateStudent.setAge(age);
+            updateStudent.setFaculty(new Faculty());
+            updateStudent.getFaculty().setId(facultyId);
+            return repository.save(updateStudent);
+        }
+
+        if (name == null & age == null & facultyId != null) {
+            service.validateCheck(facultyId);
+            updateStudent.setFaculty(new Faculty());
+            updateStudent.getFaculty().setId(facultyId);
+            return repository.save(updateStudent);
+        }
+
+        if (name == null & age == null & facultyId == null) {
+            return updateStudent;
+        }
+
+        service.validateCheck(name);
+        service.validateCheck(age);
+        service.validateCheck(facultyId);
+        updateStudent.setName(name);
+        updateStudent.setAge(age);
+        updateStudent.setFaculty(new Faculty());
+        updateStudent.getFaculty().setId(facultyId);
         return repository.save(updateStudent);
     }
 

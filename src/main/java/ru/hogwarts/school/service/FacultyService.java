@@ -6,11 +6,11 @@ import ru.hogwarts.school.model.Student;
 import java.util.Collection;
 
 public interface FacultyService {
-    Faculty add(Faculty faculty);
+    Faculty add(String name, String color);
 
     Faculty get(Long id);
 
-    Faculty edit(Long id, Faculty faculty);
+    Faculty edit(Long id, String name, String color);
 
     Faculty remove(Long id);
 

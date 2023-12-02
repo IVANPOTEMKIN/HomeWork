@@ -24,10 +24,11 @@ public class FacultyServiceImpl implements FacultyService {
     }
 
     @Override
-    public Faculty add(Faculty faculty) {
-        service.validateCheck(faculty);
-        service.isFacultyAlreadyAdded(getAll(), faculty);
-        return repository.save(faculty);
+    public Faculty add(String name, String color) {
+        Faculty newFaculty = new Faculty(name, color);
+        service.validateCheck(newFaculty);
+        service.isFacultyAlreadyAdded(getAll(), newFaculty);
+        return repository.save(newFaculty);
     }
 
     @Override
@@ -37,14 +38,28 @@ public class FacultyServiceImpl implements FacultyService {
     }
 
     @Override
-    public Faculty edit(Long id, Faculty faculty) {
+    public Faculty edit(Long id, String name, String color) {
         Faculty updateFaculty = get(id);
 
-        service.validateCheck(faculty);
-        updateFaculty.setName(faculty.getName());
-        updateFaculty.setColor(faculty.getColor());
-        updateFaculty.setStudents(faculty.getStudents());
+        if (name != null & color == null) {
+            service.validateCheck(name);
+            updateFaculty.setName(name);
+            return repository.save(updateFaculty);
+        }
 
+        if (name == null & color != null) {
+            service.validateCheck(color);
+            updateFaculty.setColor(color);
+            return repository.save(updateFaculty);
+        }
+
+        if (name == null & color == null) {
+            return updateFaculty;
+        }
+
+        service.validateCheck(name, color);
+        updateFaculty.setName(name);
+        updateFaculty.setColor(color);
         return repository.save(updateFaculty);
     }
 
@@ -66,14 +81,17 @@ public class FacultyServiceImpl implements FacultyService {
             service.validateCheck(name);
             return repository.findByNameIgnoreCase(name);
         }
+
         if (name == null & color != null) {
             service.validateCheck(color);
             return repository.findByColorIgnoreCase(color);
         }
+
         if (name != null & color != null) {
             service.validateCheck(name, color);
             return repository.findByNameIgnoreCaseAndColorIgnoreCase(name, color);
         }
+
         return repository.findAll();
     }
 

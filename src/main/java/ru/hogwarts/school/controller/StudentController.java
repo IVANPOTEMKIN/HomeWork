@@ -24,8 +24,10 @@ public class StudentController {
     }
 
     @PostMapping
-    public Student add(@RequestBody Student student) {
-        return service.add(student);
+    public Student add(@RequestParam String name,
+                       @RequestParam Integer age,
+                       @RequestParam Long facultyId) {
+        return service.add(name, age, facultyId);
     }
 
     @GetMapping("{id}")
@@ -50,8 +52,11 @@ public class StudentController {
     }
 
     @PutMapping("{id}")
-    public Student edit(@PathVariable Long id, @RequestBody Student student) {
-        return service.edit(id, student);
+    public Student edit(@PathVariable Long id,
+                        @RequestParam(required = false) String name,
+                        @RequestParam(required = false) Integer age,
+                        @RequestParam(required = false) Long facultyId) {
+        return service.edit(id, name, age, facultyId);
     }
 
     @DeleteMapping("{id}")

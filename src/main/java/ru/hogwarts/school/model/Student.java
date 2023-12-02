@@ -20,8 +20,7 @@ public class Student {
     public Student() {
     }
 
-    public Student(Long id, String name, Integer age, Faculty faculty) {
-        this.id = id;
+    public Student(String name, Integer age, Faculty faculty) {
         this.name = name;
         this.age = age;
         this.faculty = faculty;
@@ -32,7 +31,7 @@ public class Student {
     }
 
     public void setId(Long id) {
-        if (id != null && id >= 0) {
+        if (id != null && id > 0) {
             this.id = id;
             return;
         }
@@ -46,7 +45,7 @@ public class Student {
     public void setName(String name) {
         if (name != null
                 && !name.isBlank()
-                && name.matches("[а-яА-Я ]+")) {
+                && name.matches("[а-яА-Я -]+")) {
             this.name = name;
             return;
         }
