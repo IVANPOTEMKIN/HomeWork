@@ -125,7 +125,7 @@ public class StudentServiceImpl implements StudentService {
             return repository.findByAgeBetween(minAge, maxAge);
         }
 
-        return repository.findAll();
+        return getAll();
     }
 
     @Override

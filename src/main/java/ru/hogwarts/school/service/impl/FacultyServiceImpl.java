@@ -91,7 +91,7 @@ public class FacultyServiceImpl implements FacultyService {
             return repository.findByNameContainsIgnoreCaseAndColorContainsIgnoreCase(name, color);
         }
 
-        return repository.findAll();
+        return getAll();
     }
 
     @Override
