@@ -24,33 +24,25 @@ public class CheckServiceImplTest {
     public static Stream<Arguments> provideParamsForStudentTest() {
         return Stream.of(
                 Arguments.of((Object) null),
-                Arguments.of(new Student(null, HARRY.getAge(), GRIFFINDOR)),
-                Arguments.of(new Student(" ", HARRY.getAge(), GRIFFINDOR)),
-                Arguments.of(new Student("Гриффиндор_1", HARRY.getAge(), GRIFFINDOR)),
-                Arguments.of(new Student(HARRY.getName(), null, GRIFFINDOR)),
-                Arguments.of(new Student(HARRY.getName(), 0, GRIFFINDOR)),
-                Arguments.of(new Student(HARRY.getName(), -1, GRIFFINDOR)),
-                Arguments.of(new Student(HARRY.getName(), HARRY.getAge(), null)),
-                Arguments.of(new Student(HARRY.getName(), HARRY.getAge(), new Faculty(null, GRIFFINDOR.getColor()))),
-                Arguments.of(new Student(HARRY.getName(), HARRY.getAge(), new Faculty(" ", GRIFFINDOR.getColor()))),
-                Arguments.of(new Student(HARRY.getName(), HARRY.getAge(), new Faculty("Гриффиндор_1", GRIFFINDOR.getColor()))),
-                Arguments.of(new Student(HARRY.getName(), HARRY.getAge(), new Faculty(GRIFFINDOR.getName(), null))),
-                Arguments.of(new Student(HARRY.getName(), HARRY.getAge(), new Faculty(GRIFFINDOR.getName(), " "))),
-                Arguments.of(new Student(HARRY.getName(), HARRY.getAge(), new Faculty(GRIFFINDOR.getName(), "красно-золотой_1"))),
-                Arguments.of(new Student(HARRY.getName(), HARRY.getAge(), new Faculty(GRIFFINDOR.getColor(), GRIFFINDOR.getColor())))
+                Arguments.of(new Student(null, HARRY_AGE, new Faculty())),
+                Arguments.of(new Student(" ", HARRY_AGE, new Faculty())),
+                Arguments.of(new Student(INVALIDE_NAME_STUDENT, HARRY_AGE, new Faculty())),
+                Arguments.of(new Student(HARRY_NAME, null, new Faculty())),
+                Arguments.of(new Student(HARRY_NAME, 0, new Faculty())),
+                Arguments.of(new Student(HARRY_NAME, -1, new Faculty()))
         );
     }
 
     public static Stream<Arguments> provideParamsForFacultyTest() {
         return Stream.of(
                 Arguments.of((Object) null),
-                Arguments.of(new Faculty(null, GRIFFINDOR.getColor())),
-                Arguments.of(new Faculty(" ", GRIFFINDOR.getColor())),
-                Arguments.of(new Faculty("Гриффиндор_1", GRIFFINDOR.getColor())),
-                Arguments.of(new Faculty(GRIFFINDOR.getName(), null)),
-                Arguments.of(new Faculty(GRIFFINDOR.getName(), " ")),
-                Arguments.of(new Faculty(GRIFFINDOR.getName(), "красно-золотой_1")),
-                Arguments.of(new Faculty(GRIFFINDOR.getName(), GRIFFINDOR.getName()))
+                Arguments.of(new Faculty(null, GRIFFINDOR_COLOR)),
+                Arguments.of(new Faculty(" ", GRIFFINDOR_COLOR)),
+                Arguments.of(new Faculty(INVALIDE_NAME_FACULTY, GRIFFINDOR_COLOR)),
+                Arguments.of(new Faculty(GRIFFINDOR_NAME, null)),
+                Arguments.of(new Faculty(GRIFFINDOR_NAME, " ")),
+                Arguments.of(new Faculty(GRIFFINDOR_NAME, INVALIDE_COLOR_FACULTY)),
+                Arguments.of(new Faculty(GRIFFINDOR_NAME, GRIFFINDOR_NAME))
         );
     }
 
@@ -72,13 +64,13 @@ public class CheckServiceImplTest {
 
     public static Stream<Arguments> provideParamsForSeveralIntegerTest() {
         return Stream.of(
-                Arguments.of(null, HARRY.getAge()),
-                Arguments.of(0, HARRY.getAge()),
-                Arguments.of(-1, HARRY.getAge()),
-                Arguments.of(HERMIONE.getAge(), null),
-                Arguments.of(HERMIONE.getAge(), 0),
-                Arguments.of(HERMIONE.getAge(), -1),
-                Arguments.of(HERMIONE.getAge(), HARRY.getAge())
+                Arguments.of(null, HERMIONE_AGE),
+                Arguments.of(0, HERMIONE_AGE),
+                Arguments.of(-1, HERMIONE_AGE),
+                Arguments.of(HARRY_AGE, null),
+                Arguments.of(HARRY_AGE, 0),
+                Arguments.of(HARRY_AGE, -1),
+                Arguments.of(HERMIONE_AGE, HARRY_AGE)
         );
     }
 
@@ -86,25 +78,24 @@ public class CheckServiceImplTest {
         return Stream.of(
                 Arguments.of((Object) null),
                 Arguments.of(" "),
-                Arguments.of("красно-золотой_1")
+                Arguments.of(INVALIDE_COLOR_FACULTY)
         );
     }
 
     public static Stream<Arguments> provideParamsForSeveralStringTest() {
         return Stream.of(
-                Arguments.of(null, GRIFFINDOR.getColor()),
-                Arguments.of(" ", GRIFFINDOR.getColor()),
-                Arguments.of("Гриффиндор_1", GRIFFINDOR.getColor()),
-                Arguments.of(GRIFFINDOR.getName(), null),
-                Arguments.of(GRIFFINDOR.getName(), " "),
-                Arguments.of(GRIFFINDOR.getName(), "красно-золотой_1"),
-                Arguments.of(GRIFFINDOR.getName(), GRIFFINDOR.getName())
+                Arguments.of(null, GRIFFINDOR_COLOR),
+                Arguments.of(" ", GRIFFINDOR_COLOR),
+                Arguments.of(INVALIDE_NAME_FACULTY, GRIFFINDOR_COLOR),
+                Arguments.of(GRIFFINDOR_NAME, null),
+                Arguments.of(GRIFFINDOR_NAME, " "),
+                Arguments.of(GRIFFINDOR_NAME, INVALIDE_COLOR_FACULTY),
+                Arguments.of(GRIFFINDOR_NAME, GRIFFINDOR_NAME)
         );
     }
 
     @Test
     void validateCheckStudent_success() {
-        HARRY.setFaculty(GRIFFINDOR);
         assertFalse(service.validateCheck(HARRY));
     }
 
@@ -120,22 +111,22 @@ public class CheckServiceImplTest {
 
     @Test
     void validateCheckInteger_success() {
-        assertFalse(service.validateCheck(HARRY.getAge()));
+        assertFalse(service.validateCheck(HARRY_AGE));
     }
 
     @Test
     void validateCheckSeveralInteger_success() {
-        assertFalse(service.validateCheck(HARRY.getAge(), HERMIONE.getAge()));
+        assertFalse(service.validateCheck(HARRY_AGE, HERMIONE_AGE));
     }
 
     @Test
     void validateCheckString_success() {
-        assertFalse(service.validateCheck(HARRY.getName()));
+        assertFalse(service.validateCheck(HARRY_NAME));
     }
 
     @Test
     void validateCheckSeveralString_success() {
-        assertFalse(service.validateCheck(GRIFFINDOR.getName(), GRIFFINDOR.getColor()));
+        assertFalse(service.validateCheck(GRIFFINDOR_NAME, GRIFFINDOR_COLOR));
     }
 
     @ParameterizedTest
@@ -243,7 +234,7 @@ public class CheckServiceImplTest {
 
     @Test
     void isFacultyAlreadyAdded_success() {
-        assertFalse(service.isFacultyAlreadyAdded(getFaculties(), HUFFLEPUFF));
+        assertFalse(service.isFacultyAlreadyAdded(getFaculties(), SLYTHERIN));
     }
 
     @Test

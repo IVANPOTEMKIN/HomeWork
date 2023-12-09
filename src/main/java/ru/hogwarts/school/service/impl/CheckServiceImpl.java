@@ -16,8 +16,7 @@ public class CheckServiceImpl implements CheckService {
     public boolean validateCheck(Student student) {
         if (student == null
                 || validateCheck(student.getName())
-                || validateCheck(student.getAge())
-                || validateCheck(student.getFaculty())) {
+                || validateCheck(student.getAge())) {
             throw new InvalideInputException();
         }
         return false;

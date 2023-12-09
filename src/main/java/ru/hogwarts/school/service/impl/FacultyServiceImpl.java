@@ -26,8 +26,10 @@ public class FacultyServiceImpl implements FacultyService {
     @Override
     public Faculty add(String name, String color) {
         Faculty newFaculty = new Faculty(name, color);
+
         service.validateCheck(newFaculty);
         service.isFacultyAlreadyAdded(getAll(), newFaculty);
+
         return repository.save(newFaculty);
     }
 
@@ -42,13 +44,11 @@ public class FacultyServiceImpl implements FacultyService {
         Faculty updateFaculty = get(id);
 
         if (name != null & color == null) {
-            service.validateCheck(name);
             updateFaculty.setName(name);
             return repository.save(updateFaculty);
         }
 
         if (name == null & color != null) {
-            service.validateCheck(color);
             updateFaculty.setColor(color);
             return repository.save(updateFaculty);
         }
@@ -57,7 +57,6 @@ public class FacultyServiceImpl implements FacultyService {
             return updateFaculty;
         }
 
-        service.validateCheck(name, color);
         updateFaculty.setName(name);
         updateFaculty.setColor(color);
         return repository.save(updateFaculty);

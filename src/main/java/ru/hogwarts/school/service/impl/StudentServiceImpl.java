@@ -7,6 +7,7 @@ import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 import ru.hogwarts.school.service.CheckService;
+import ru.hogwarts.school.service.FacultyService;
 import ru.hogwarts.school.service.StudentService;
 
 import java.util.Collection;
@@ -15,26 +16,32 @@ import java.util.Collection;
 public class StudentServiceImpl implements StudentService {
 
     private final StudentRepository repository;
-    private final CheckService service;
+    private final FacultyService facultyService;
+    private final CheckService checkService;
 
     @Autowired
-    public StudentServiceImpl(StudentRepository repository, CheckService service) {
+    public StudentServiceImpl(StudentRepository repository,
+                              FacultyService facultyService,
+                              CheckService checkService) {
         this.repository = repository;
-        this.service = service;
+        this.facultyService = facultyService;
+        this.checkService = checkService;
     }
 
     @Override
     public Student add(String name, Integer age, Long facultyId) {
         Student newStudent = new Student(name, age, new Faculty());
-        newStudent.getFaculty().setId(facultyId);
-        service.validateCheck(newStudent);
-        service.isStudentAlreadyAdded(getAll(), newStudent);
+        newStudent.getFaculty().setId(facultyService.get(facultyId).getId());
+
+        checkService.validateCheck(newStudent);
+        checkService.isStudentAlreadyAdded(getAll(), newStudent);
+
         return repository.save(newStudent);
     }
 
     @Override
     public Student get(Long id) {
-        service.validateCheck(id);
+        checkService.validateCheck(id);
         return repository.findById(id).orElseThrow(StudentNotFoundException::new);
     }
 
@@ -43,47 +50,38 @@ public class StudentServiceImpl implements StudentService {
         Student updateStudent = get(id);
 
         if (name != null & age == null & facultyId == null) {
-            service.validateCheck(name);
             updateStudent.setName(name);
             return repository.save(updateStudent);
         }
 
         if (name != null & age != null & facultyId == null) {
-            service.validateCheck(name);
-            service.validateCheck(age);
             updateStudent.setName(name);
             updateStudent.setAge(age);
             return repository.save(updateStudent);
         }
 
         if (name != null & age == null & facultyId != null) {
-            service.validateCheck(name);
-            service.validateCheck(facultyId);
             updateStudent.setName(name);
             updateStudent.setFaculty(new Faculty());
-            updateStudent.getFaculty().setId(facultyId);
+            updateStudent.getFaculty().setId(facultyService.get(facultyId).getId());
             return repository.save(updateStudent);
         }
 
         if (name == null & age != null & facultyId == null) {
-            service.validateCheck(age);
             updateStudent.setAge(age);
             return repository.save(updateStudent);
         }
 
         if (name == null & age != null & facultyId != null) {
-            service.validateCheck(age);
-            service.validateCheck(facultyId);
             updateStudent.setAge(age);
             updateStudent.setFaculty(new Faculty());
-            updateStudent.getFaculty().setId(facultyId);
+            updateStudent.getFaculty().setId(facultyService.get(facultyId).getId());
             return repository.save(updateStudent);
         }
 
         if (name == null & age == null & facultyId != null) {
-            service.validateCheck(facultyId);
             updateStudent.setFaculty(new Faculty());
-            updateStudent.getFaculty().setId(facultyId);
+            updateStudent.getFaculty().setId(facultyService.get(facultyId).getId());
             return repository.save(updateStudent);
         }
 
@@ -91,13 +89,10 @@ public class StudentServiceImpl implements StudentService {
             return updateStudent;
         }
 
-        service.validateCheck(name);
-        service.validateCheck(age);
-        service.validateCheck(facultyId);
         updateStudent.setName(name);
         updateStudent.setAge(age);
         updateStudent.setFaculty(new Faculty());
-        updateStudent.getFaculty().setId(facultyId);
+        updateStudent.getFaculty().setId(facultyService.get(facultyId).getId());
         return repository.save(updateStudent);
     }
 
@@ -116,17 +111,20 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public Collection<Student> getByAge(Integer minAge, Integer maxAge) {
         if (minAge != null & maxAge == null) {
-            service.validateCheck(minAge);
+            checkService.validateCheck(minAge);
             return repository.findByAge(minAge);
         }
+
         if (minAge == null & maxAge != null) {
-            service.validateCheck(maxAge);
+            checkService.validateCheck(maxAge);
             return repository.findByAge(maxAge);
         }
+
         if (minAge != null & maxAge != null) {
-            service.validateCheck(minAge, maxAge);
+            checkService.validateCheck(minAge, maxAge);
             return repository.findByAgeBetween(minAge, maxAge);
         }
+
         return repository.findAll();
     }
 

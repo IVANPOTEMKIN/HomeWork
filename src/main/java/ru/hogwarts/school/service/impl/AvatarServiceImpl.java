@@ -44,7 +44,7 @@ public class AvatarServiceImpl implements AvatarService {
     @Override
     public ResponseEntity<String> uploadAvatar(Long studentId, MultipartFile avatarFile) throws IOException {
         Student student = studentService.get(studentId);
-        Path filePath = Path.of(avatarsDir, studentId + "." + getExtensions(Objects.requireNonNull(avatarFile.getOriginalFilename())));
+        Path filePath = Path.of(avatarsDir, student.getName() + "." + getExtensions(Objects.requireNonNull(avatarFile.getOriginalFilename())));
         Files.createDirectories(filePath.getParent());
         Files.deleteIfExists(filePath);
 
@@ -63,6 +63,7 @@ public class AvatarServiceImpl implements AvatarService {
         avatar.setFileSize(avatarFile.getSize());
         avatar.setMediaType(avatarFile.getContentType());
         avatar.setData(avatarFile.getBytes());
+
         repository.save(avatar);
         return ResponseEntity.ok().build();
     }

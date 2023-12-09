@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.hogwarts.school.exception.FacultyAlreadyAddedException;
 import ru.hogwarts.school.exception.FacultyNotFoundException;
 import ru.hogwarts.school.exception.InvalideInputException;
+import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 import ru.hogwarts.school.service.impl.StudentServiceImpl;
@@ -27,58 +28,68 @@ class StudentServiceImplTest {
     @Mock
     private StudentRepository repository;
     @Mock
+    FacultyService facultyService;
+    @Mock
     private CheckService checkService;
     @InjectMocks
     private StudentServiceImpl studentService;
 
     @BeforeEach
-    public void setUp() {
-        studentService = new StudentServiceImpl(repository, checkService);
+    void setUp() {
+        studentService = new StudentServiceImpl(repository, facultyService, checkService);
+
+        GRIFFINDOR.setId(GRIFFINDOR_ID);
     }
 
     @Test
     void add_success() {
-        HARRY.getFaculty().setId(GRIFFINDOR_ID);
-
+        when(facultyService.get(GRIFFINDOR_ID)).thenReturn(GRIFFINDOR);
         when(repository.findAll()).thenReturn(getStudents());
         when(repository.save(HARRY)).thenReturn(HARRY);
 
-        assertEquals(HARRY, studentService.add(HARRY.getName(), HARRY.getAge(), HARRY.getFaculty().getId()));
+        HARRY.getFaculty().setId(GRIFFINDOR_ID);
+
+        assertEquals(HARRY, studentService.add(HARRY_NAME, HARRY_AGE, GRIFFINDOR_ID));
 
         verify(repository, times(1)).findAll();
         verify(checkService, times(1)).validateCheck(HARRY);
         verify(checkService, times(1)).isStudentAlreadyAdded(getStudents(), HARRY);
         verify(repository, times(1)).save(HARRY);
+        verify(facultyService, times(1)).get(GRIFFINDOR_ID);
     }
 
     @Test
     void add_InvalideInputException() {
-        HARRY.getFaculty().setId(GRIFFINDOR_ID);
-
+        when(facultyService.get(GRIFFINDOR_ID)).thenReturn(GRIFFINDOR);
         when(repository.findAll()).thenReturn(getStudents());
         when(repository.save(HARRY)).thenThrow(InvalideInputException.class);
 
-        assertThrows(InvalideInputException.class, () -> studentService.add(HARRY.getName(), HARRY.getAge(), HARRY.getFaculty().getId()));
+        HARRY.getFaculty().setId(GRIFFINDOR_ID);
+
+        assertThrows(InvalideInputException.class, () -> studentService.add(HARRY_NAME, HARRY_AGE, GRIFFINDOR_ID));
 
         verify(repository, times(1)).findAll();
         verify(checkService, times(1)).validateCheck(HARRY);
         verify(checkService, times(1)).isStudentAlreadyAdded(getStudents(), HARRY);
         verify(repository, times(1)).save(HARRY);
+        verify(facultyService, times(1)).get(GRIFFINDOR_ID);
     }
 
     @Test
     void add_StudentAlreadyAddedException() {
-        HARRY.getFaculty().setId(GRIFFINDOR_ID);
-
+        when(facultyService.get(GRIFFINDOR_ID)).thenReturn(GRIFFINDOR);
         when(repository.findAll()).thenReturn(getStudents());
         when(repository.save(HARRY)).thenThrow(FacultyAlreadyAddedException.class);
 
-        assertThrows(FacultyAlreadyAddedException.class, () -> studentService.add(HARRY.getName(), HARRY.getAge(), HARRY.getFaculty().getId()));
+        HARRY.getFaculty().setId(GRIFFINDOR_ID);
+
+        assertThrows(FacultyAlreadyAddedException.class, () -> studentService.add(HARRY_NAME, HARRY_AGE, GRIFFINDOR_ID));
 
         verify(repository, times(1)).findAll();
         verify(checkService, times(1)).validateCheck(HARRY);
         verify(checkService, times(1)).isStudentAlreadyAdded(getStudents(), HARRY);
         verify(repository, times(1)).save(HARRY);
+        verify(facultyService, times(1)).get(GRIFFINDOR_ID);
     }
 
     @Test
@@ -115,237 +126,253 @@ class StudentServiceImplTest {
     @Test
     void edit_WithOnlyName_success() {
         when(repository.findById(HARRY_ID)).thenReturn(Optional.of(HARRY));
-        when(repository.save(new Student(DRACO.getName(), HARRY.getAge(), HARRY.getFaculty())))
-                .thenReturn(new Student(DRACO.getName(), HARRY.getAge(), HARRY.getFaculty()));
+        when(repository.save(new Student(DRACO_NAME, HARRY_AGE, new Faculty())))
+                .thenReturn(new Student(DRACO_NAME, HARRY_AGE, new Faculty()));
 
-        assertEquals(new Student(DRACO.getName(), HARRY.getAge(), HARRY.getFaculty()),
-                studentService.edit(HARRY_ID, DRACO.getName(), null, null));
+        assertEquals(new Student(DRACO_NAME, HARRY_AGE, new Faculty()),
+                studentService.edit(HARRY_ID, DRACO_NAME, null, null));
 
-        verify(checkService, times(1)).validateCheck(DRACO.getName());
         verify(checkService, times(1)).validateCheck(HARRY_ID);
         verify(repository, times(1)).findById(HARRY_ID);
-        verify(repository, times(1)).save(new Student(DRACO.getName(), HARRY.getAge(), HARRY.getFaculty()));
+        verify(repository, times(1)).save(new Student(DRACO_NAME, HARRY_AGE, new Faculty()));
     }
 
     @Test
     void edit_WithOnlyName_InvalideInputException() {
         when(repository.findById(HARRY_ID)).thenReturn(Optional.of(HARRY));
-        when(repository.save(new Student(DRACO.getName(), HARRY.getAge(), HARRY.getFaculty())))
+        when(repository.save(new Student(DRACO_NAME, HARRY_AGE, new Faculty())))
                 .thenThrow(InvalideInputException.class);
 
         assertThrows(InvalideInputException.class,
-                () -> studentService.edit(HARRY_ID, DRACO.getName(), null, null));
+                () -> studentService.edit(HARRY_ID, DRACO_NAME, null, null));
 
-        verify(checkService, times(1)).validateCheck(DRACO.getName());
         verify(checkService, times(1)).validateCheck(HARRY_ID);
         verify(repository, times(1)).findById(HARRY_ID);
-        verify(repository, times(1)).save(new Student(DRACO.getName(), HARRY.getAge(), HARRY.getFaculty()));
+        verify(repository, times(1)).save(new Student(DRACO_NAME, HARRY_AGE, new Faculty()));
     }
 
     @Test
     void edit_WithOnlyNameAndAge_success() {
         when(repository.findById(HARRY_ID)).thenReturn(Optional.of(HARRY));
-        when(repository.save(new Student(DRACO.getName(), DRACO.getAge(), HARRY.getFaculty())))
-                .thenReturn(new Student(DRACO.getName(), DRACO.getAge(), HARRY.getFaculty()));
+        when(repository.save(new Student(DRACO_NAME, DRACO_AGE, new Faculty())))
+                .thenReturn(new Student(DRACO_NAME, DRACO_AGE, new Faculty()));
 
-        assertEquals(new Student(DRACO.getName(), DRACO.getAge(), HARRY.getFaculty()),
-                studentService.edit(HARRY_ID, DRACO.getName(), DRACO.getAge(), null));
+        assertEquals(new Student(DRACO_NAME, DRACO_AGE, new Faculty()),
+                studentService.edit(HARRY_ID, DRACO_NAME, DRACO_AGE, null));
 
-        verify(checkService, times(1)).validateCheck(DRACO.getName());
-        verify(checkService, times(1)).validateCheck(DRACO.getAge());
         verify(checkService, times(1)).validateCheck(HARRY_ID);
         verify(repository, times(1)).findById(HARRY_ID);
-        verify(repository, times(1)).save(new Student(DRACO.getName(), DRACO.getAge(), HARRY.getFaculty()));
+        verify(repository, times(1)).save(new Student(DRACO_NAME, DRACO_AGE, new Faculty()));
     }
 
     @Test
     void edit_WithOnlyNameAndAge_InvalideInputException() {
         when(repository.findById(HARRY_ID)).thenReturn(Optional.of(HARRY));
-        when(repository.save(new Student(DRACO.getName(), DRACO.getAge(), HARRY.getFaculty())))
+        when(repository.save(new Student(DRACO_NAME, DRACO_AGE, new Faculty())))
                 .thenThrow(InvalideInputException.class);
 
         assertThrows(InvalideInputException.class,
-                () -> studentService.edit(HARRY_ID, DRACO.getName(), DRACO.getAge(), null));
+                () -> studentService.edit(HARRY_ID, DRACO_NAME, DRACO_AGE, null));
 
-        verify(checkService, times(1)).validateCheck(DRACO.getName());
-        verify(checkService, times(1)).validateCheck(DRACO.getAge());
         verify(checkService, times(1)).validateCheck(HARRY_ID);
         verify(repository, times(1)).findById(HARRY_ID);
-        verify(repository, times(1)).save(new Student(DRACO.getName(), DRACO.getAge(), HARRY.getFaculty()));
+        verify(repository, times(1)).save(new Student(DRACO_NAME, DRACO_AGE, new Faculty()));
     }
 
     @Test
     void edit_WithOnlyNameAndFacultyId_success() {
+        SLYTHERIN.setId(SLYTHERIN_ID);
+        DRACO.setFaculty(new Faculty());
+
+        when(facultyService.get(SLYTHERIN_ID)).thenReturn(SLYTHERIN);
+        when(repository.findById(HARRY_ID)).thenReturn(Optional.of(HARRY));
+        when(repository.save(new Student(DRACO_NAME, HARRY_AGE, DRACO.getFaculty())))
+                .thenReturn(new Student(DRACO_NAME, HARRY_AGE, DRACO.getFaculty()));
+
         DRACO.getFaculty().setId(SLYTHERIN_ID);
 
-        when(repository.findById(HARRY_ID)).thenReturn(Optional.of(HARRY));
-        when(repository.save(new Student(DRACO.getName(), HARRY.getAge(), DRACO.getFaculty())))
-                .thenReturn(new Student(DRACO.getName(), HARRY.getAge(), DRACO.getFaculty()));
+        assertEquals(new Student(DRACO_NAME, HARRY_AGE, DRACO.getFaculty()),
+                studentService.edit(HARRY_ID, DRACO_NAME, null, SLYTHERIN_ID));
 
-        assertEquals(new Student(DRACO.getName(), HARRY.getAge(), DRACO.getFaculty()),
-                studentService.edit(HARRY_ID, DRACO.getName(), HARRY.getAge(), DRACO.getFaculty().getId()));
-
-        verify(checkService, times(1)).validateCheck(DRACO.getName());
-        verify(checkService, times(1)).validateCheck(DRACO.getFaculty().getId());
         verify(checkService, times(1)).validateCheck(HARRY_ID);
         verify(repository, times(1)).findById(HARRY_ID);
-        verify(repository, times(1)).save(new Student(DRACO.getName(), HARRY.getAge(), DRACO.getFaculty()));
+        verify(repository, times(1)).save(new Student(DRACO_NAME, HARRY_AGE, DRACO.getFaculty()));
+        verify(facultyService, times(1)).get(SLYTHERIN_ID);
     }
 
     @Test
     void edit_WithOnlyNameAndFacultyId_InvalideInputException() {
-        DRACO.getFaculty().setId(SLYTHERIN_ID);
+        SLYTHERIN.setId(SLYTHERIN_ID);
+        DRACO.setFaculty(new Faculty());
 
+        when(facultyService.get(SLYTHERIN_ID)).thenReturn(SLYTHERIN);
         when(repository.findById(HARRY_ID)).thenReturn(Optional.of(HARRY));
-        when(repository.save(new Student(DRACO.getName(), HARRY.getAge(), DRACO.getFaculty())))
+        when(repository.save(new Student(DRACO_NAME, HARRY_AGE, DRACO.getFaculty())))
                 .thenThrow(InvalideInputException.class);
 
-        assertThrows(InvalideInputException.class,
-                () -> studentService.edit(HARRY_ID, DRACO.getName(), HARRY.getAge(), DRACO.getFaculty().getId()));
+        DRACO.getFaculty().setId(SLYTHERIN_ID);
 
-        verify(checkService, times(1)).validateCheck(DRACO.getName());
-        verify(checkService, times(1)).validateCheck(DRACO.getFaculty().getId());
+        assertThrows(InvalideInputException.class,
+                () -> studentService.edit(HARRY_ID, DRACO_NAME, null, SLYTHERIN_ID));
+
         verify(checkService, times(1)).validateCheck(HARRY_ID);
         verify(repository, times(1)).findById(HARRY_ID);
-        verify(repository, times(1)).save(new Student(DRACO.getName(), HARRY.getAge(), DRACO.getFaculty()));
+        verify(repository, times(1)).save(new Student(DRACO_NAME, HARRY_AGE, DRACO.getFaculty()));
+        verify(facultyService, times(1)).get(SLYTHERIN_ID);
     }
 
     @Test
     void edit_WithOnlyAge_success() {
         when(repository.findById(HARRY_ID)).thenReturn(Optional.of(HARRY));
-        when(repository.save(new Student(HARRY.getName(), DRACO.getAge(), HARRY.getFaculty())))
-                .thenReturn(new Student(HARRY.getName(), DRACO.getAge(), HARRY.getFaculty()));
+        when(repository.save(new Student(HARRY_NAME, DRACO_AGE, new Faculty())))
+                .thenReturn(new Student(HARRY_NAME, DRACO_AGE, new Faculty()));
 
-        assertEquals(new Student(HARRY.getName(), DRACO.getAge(), HARRY.getFaculty()),
-                studentService.edit(HARRY_ID, null, DRACO.getAge(), null));
+        assertEquals(new Student(HARRY_NAME, DRACO_AGE, new Faculty()),
+                studentService.edit(HARRY_ID, null, DRACO_AGE, null));
 
-        verify(checkService, times(1)).validateCheck(DRACO.getAge());
         verify(checkService, times(1)).validateCheck(HARRY_ID);
         verify(repository, times(1)).findById(HARRY_ID);
-        verify(repository, times(1)).save(new Student(HARRY.getName(), DRACO.getAge(), HARRY.getFaculty()));
+        verify(repository, times(1)).save(new Student(HARRY_NAME, DRACO_AGE, new Faculty()));
     }
 
     @Test
     void edit_WithOnlyAge_InvalideInputException() {
         when(repository.findById(HARRY_ID)).thenReturn(Optional.of(HARRY));
-        when(repository.save(new Student(HARRY.getName(), DRACO.getAge(), HARRY.getFaculty())))
+        when(repository.save(new Student(HARRY_NAME, DRACO_AGE, new Faculty())))
                 .thenThrow(InvalideInputException.class);
 
         assertThrows(InvalideInputException.class,
-                () -> studentService.edit(HARRY_ID, null, DRACO.getAge(), null));
+                () -> studentService.edit(HARRY_ID, null, DRACO_AGE, null));
 
-        verify(checkService, times(1)).validateCheck(DRACO.getAge());
         verify(checkService, times(1)).validateCheck(HARRY_ID);
         verify(repository, times(1)).findById(HARRY_ID);
-        verify(repository, times(1)).save(new Student(HARRY.getName(), DRACO.getAge(), HARRY.getFaculty()));
+        verify(repository, times(1)).save(new Student(HARRY_NAME, DRACO_AGE, new Faculty()));
     }
 
     @Test
     void edit_WithOnlyAgeAndFacultyId_success() {
+        SLYTHERIN.setId(SLYTHERIN_ID);
+        DRACO.setFaculty(new Faculty());
+
+        when(facultyService.get(SLYTHERIN_ID)).thenReturn(SLYTHERIN);
+        when(repository.findById(HARRY_ID)).thenReturn(Optional.of(HARRY));
+        when(repository.save(new Student(HARRY_NAME, DRACO_AGE, DRACO.getFaculty())))
+                .thenReturn(new Student(HARRY_NAME, DRACO_AGE, DRACO.getFaculty()));
+
         DRACO.getFaculty().setId(SLYTHERIN_ID);
 
-        when(repository.findById(HARRY_ID)).thenReturn(Optional.of(HARRY));
-        when(repository.save(new Student(HARRY.getName(), DRACO.getAge(), DRACO.getFaculty())))
-                .thenReturn(new Student(HARRY.getName(), DRACO.getAge(), DRACO.getFaculty()));
+        assertEquals(new Student(HARRY_NAME, DRACO_AGE, DRACO.getFaculty()),
+                studentService.edit(HARRY_ID, null, DRACO_AGE, SLYTHERIN_ID));
 
-        assertEquals(new Student(HARRY.getName(), DRACO.getAge(), DRACO.getFaculty()),
-                studentService.edit(HARRY_ID, null, DRACO.getAge(), DRACO.getFaculty().getId()));
-
-        verify(checkService, times(1)).validateCheck(DRACO.getAge());
-        verify(checkService, times(1)).validateCheck(DRACO.getFaculty().getId());
         verify(checkService, times(1)).validateCheck(HARRY_ID);
         verify(repository, times(1)).findById(HARRY_ID);
-        verify(repository, times(1)).save(new Student(HARRY.getName(), DRACO.getAge(), DRACO.getFaculty()));
+        verify(repository, times(1)).save(new Student(HARRY_NAME, DRACO_AGE, DRACO.getFaculty()));
+        verify(facultyService, times(1)).get(SLYTHERIN_ID);
     }
 
     @Test
     void edit_WithOnlyAgeAndFacultyId_InvalideInputException() {
-        DRACO.getFaculty().setId(SLYTHERIN_ID);
+        SLYTHERIN.setId(SLYTHERIN_ID);
+        DRACO.setFaculty(new Faculty());
 
+        when(facultyService.get(SLYTHERIN_ID)).thenReturn(SLYTHERIN);
         when(repository.findById(HARRY_ID)).thenReturn(Optional.of(HARRY));
-        when(repository.save(new Student(HARRY.getName(), DRACO.getAge(), DRACO.getFaculty())))
+        when(repository.save(new Student(HARRY_NAME, DRACO_AGE, DRACO.getFaculty())))
                 .thenThrow(InvalideInputException.class);
 
-        assertThrows(InvalideInputException.class,
-                () -> studentService.edit(HARRY_ID, null, DRACO.getAge(), DRACO.getFaculty().getId()));
+        DRACO.getFaculty().setId(SLYTHERIN_ID);
 
-        verify(checkService, times(1)).validateCheck(DRACO.getAge());
-        verify(checkService, times(1)).validateCheck(DRACO.getFaculty().getId());
+        assertThrows(InvalideInputException.class,
+                () -> studentService.edit(HARRY_ID, null, DRACO_AGE, SLYTHERIN_ID));
+
         verify(checkService, times(1)).validateCheck(HARRY_ID);
         verify(repository, times(1)).findById(HARRY_ID);
-        verify(repository, times(1)).save(new Student(HARRY.getName(), DRACO.getAge(), HARRY.getFaculty()));
+        verify(repository, times(1)).save(new Student(HARRY_NAME, DRACO_AGE, DRACO.getFaculty()));
+        verify(facultyService, times(1)).get(SLYTHERIN_ID);
     }
 
     @Test
     void edit_WithOnlyFacultyId_success() {
+        SLYTHERIN.setId(SLYTHERIN_ID);
+        DRACO.setFaculty(new Faculty());
+
+        when(facultyService.get(SLYTHERIN_ID)).thenReturn(SLYTHERIN);
+        when(repository.findById(HARRY_ID)).thenReturn(Optional.of(HARRY));
+        when(repository.save(new Student(HARRY_NAME, HARRY_AGE, DRACO.getFaculty())))
+                .thenReturn(new Student(HARRY_NAME, HARRY_AGE, DRACO.getFaculty()));
+
         DRACO.getFaculty().setId(SLYTHERIN_ID);
 
-        when(repository.findById(HARRY_ID)).thenReturn(Optional.of(HARRY));
-        when(repository.save(new Student(HARRY.getName(), HARRY.getAge(), DRACO.getFaculty())))
-                .thenReturn(new Student(HARRY.getName(), HARRY.getAge(), DRACO.getFaculty()));
+        assertEquals(new Student(HARRY_NAME, HARRY_AGE, DRACO.getFaculty()),
+                studentService.edit(HARRY_ID, null, null, SLYTHERIN_ID));
 
-        assertEquals(new Student(HARRY.getName(), HARRY.getAge(), DRACO.getFaculty()),
-                studentService.edit(HARRY_ID, null, null, DRACO.getFaculty().getId()));
-
-        verify(checkService, times(1)).validateCheck(DRACO.getFaculty().getId());
         verify(checkService, times(1)).validateCheck(HARRY_ID);
         verify(repository, times(1)).findById(HARRY_ID);
-        verify(repository, times(1)).save(new Student(HARRY.getName(), HARRY.getAge(), DRACO.getFaculty()));
+        verify(repository, times(1)).save(new Student(HARRY_NAME, HARRY_AGE, DRACO.getFaculty()));
+        verify(facultyService, times(1)).get(SLYTHERIN_ID);
     }
 
     @Test
     void edit_WithOnlyFacultyId_InvalideInputException() {
-        DRACO.getFaculty().setId(SLYTHERIN_ID);
+        SLYTHERIN.setId(SLYTHERIN_ID);
+        DRACO.setFaculty(new Faculty());
 
+        when(facultyService.get(SLYTHERIN_ID)).thenReturn(SLYTHERIN);
         when(repository.findById(HARRY_ID)).thenReturn(Optional.of(HARRY));
-        when(repository.save(new Student(HARRY.getName(), HARRY.getAge(), DRACO.getFaculty())))
+        when(repository.save(new Student(HARRY_NAME, HARRY_AGE, DRACO.getFaculty())))
                 .thenThrow(InvalideInputException.class);
 
-        assertThrows(InvalideInputException.class,
-                () -> studentService.edit(HARRY_ID, null, null, DRACO.getFaculty().getId()));
+        DRACO.getFaculty().setId(SLYTHERIN_ID);
 
-        verify(checkService, times(1)).validateCheck(DRACO.getFaculty().getId());
+        assertThrows(InvalideInputException.class,
+                () -> studentService.edit(HARRY_ID, null, null, SLYTHERIN_ID));
+
         verify(checkService, times(1)).validateCheck(HARRY_ID);
         verify(repository, times(1)).findById(HARRY_ID);
-        verify(repository, times(1)).save(new Student(HARRY.getName(), HARRY.getAge(), DRACO.getFaculty()));
+        verify(repository, times(1)).save(new Student(HARRY_NAME, HARRY_AGE, DRACO.getFaculty()));
+        verify(facultyService, times(1)).get(SLYTHERIN_ID);
     }
 
     @Test
     void edit_WithAllParameters_success() {
+        SLYTHERIN.setId(SLYTHERIN_ID);
+        DRACO.setFaculty(new Faculty());
+
+        when(facultyService.get(SLYTHERIN_ID)).thenReturn(SLYTHERIN);
+        when(repository.findById(HARRY_ID)).thenReturn(Optional.of(HARRY));
+        when(repository.save(new Student(DRACO_NAME, DRACO_AGE, DRACO.getFaculty())))
+                .thenReturn(new Student(DRACO_NAME, DRACO_AGE, DRACO.getFaculty()));
+
         DRACO.getFaculty().setId(SLYTHERIN_ID);
 
-        when(repository.findById(HARRY_ID)).thenReturn(Optional.of(HARRY));
-        when(repository.save(new Student(DRACO.getName(), DRACO.getAge(), DRACO.getFaculty())))
-                .thenReturn(new Student(DRACO.getName(), DRACO.getAge(), DRACO.getFaculty()));
+        assertEquals(new Student(DRACO_NAME, DRACO_AGE, DRACO.getFaculty()),
+                studentService.edit(HARRY_ID, DRACO_NAME, DRACO_AGE, SLYTHERIN_ID));
 
-        assertEquals(new Student(DRACO.getName(), DRACO.getAge(), DRACO.getFaculty()),
-                studentService.edit(HARRY_ID, DRACO.getName(), DRACO.getAge(), DRACO.getFaculty().getId()));
-
-        verify(checkService, times(1)).validateCheck(DRACO.getName());
-        verify(checkService, times(1)).validateCheck(DRACO.getAge());
-        verify(checkService, times(1)).validateCheck(DRACO.getFaculty().getId());
         verify(checkService, times(1)).validateCheck(HARRY_ID);
         verify(repository, times(1)).findById(HARRY_ID);
-        verify(repository, times(1)).save(new Student(HARRY.getName(), HARRY.getAge(), DRACO.getFaculty()));
+        verify(repository, times(1)).save(new Student(DRACO_NAME, DRACO_AGE, DRACO.getFaculty()));
+        verify(facultyService, times(1)).get(SLYTHERIN_ID);
     }
 
     @Test
     void edit_WithAllParameters_InvalideInputException() {
-        DRACO.getFaculty().setId(SLYTHERIN_ID);
+        SLYTHERIN.setId(SLYTHERIN_ID);
+        DRACO.setFaculty(new Faculty());
 
+        when(facultyService.get(SLYTHERIN_ID)).thenReturn(SLYTHERIN);
         when(repository.findById(HARRY_ID)).thenReturn(Optional.of(HARRY));
-        when(repository.save(new Student(DRACO.getName(), DRACO.getAge(), DRACO.getFaculty())))
+        when(repository.save(new Student(DRACO_NAME, DRACO_AGE, DRACO.getFaculty())))
                 .thenThrow(InvalideInputException.class);
 
-        assertThrows(InvalideInputException.class,
-                () -> studentService.edit(HARRY_ID, DRACO.getName(), DRACO.getAge(), DRACO.getFaculty().getId()));
+        DRACO.getFaculty().setId(SLYTHERIN_ID);
 
-        verify(checkService, times(1)).validateCheck(DRACO.getName());
-        verify(checkService, times(1)).validateCheck(DRACO.getAge());
-        verify(checkService, times(1)).validateCheck(DRACO.getFaculty().getId());
+        assertThrows(InvalideInputException.class,
+                () -> studentService.edit(HARRY_ID, DRACO_NAME, DRACO_AGE, SLYTHERIN_ID));
+
         verify(checkService, times(1)).validateCheck(HARRY_ID);
         verify(repository, times(1)).findById(HARRY_ID);
-        verify(repository, times(1)).save(new Student(DRACO.getName(), DRACO.getAge(), DRACO.getFaculty()));
+        verify(repository, times(1)).save(new Student(DRACO_NAME, DRACO_AGE, DRACO.getFaculty()));
+        verify(facultyService, times(1)).get(SLYTHERIN_ID);
     }
 
     @Test
@@ -381,22 +408,22 @@ class StudentServiceImplTest {
 
     @Test
     void getByAge_WithOnlyFirstParameter_success() {
-        when(repository.findByAge(HARRY.getAge())).thenReturn(List.of(HARRY));
+        when(repository.findByAge(HARRY_AGE)).thenReturn(List.of(HARRY));
 
-        assertEquals(List.of(HARRY), studentService.getByAge(HARRY.getAge(), null));
+        assertEquals(List.of(HARRY), studentService.getByAge(HARRY_AGE, null));
 
-        verify(checkService, times(1)).validateCheck(HARRY.getAge());
-        verify(repository, times(1)).findByAge(HARRY.getAge());
+        verify(checkService, times(1)).validateCheck(HARRY_AGE);
+        verify(repository, times(1)).findByAge(HARRY_AGE);
     }
 
     @Test
     void getByAge_WithOnlyFirstParameter_InvalideInputException() {
-        when(repository.findByAge(HARRY.getAge())).thenThrow(InvalideInputException.class);
+        when(repository.findByAge(HARRY_AGE)).thenThrow(InvalideInputException.class);
 
-        assertThrows(InvalideInputException.class, () -> studentService.getByAge(HARRY.getAge(), null));
+        assertThrows(InvalideInputException.class, () -> studentService.getByAge(HARRY_AGE, null));
 
-        verify(checkService, times(1)).validateCheck(HARRY.getAge());
-        verify(repository, times(1)).findByAge(HARRY.getAge());
+        verify(checkService, times(1)).validateCheck(HARRY_AGE);
+        verify(repository, times(1)).findByAge(HARRY_AGE);
     }
 
     @Test
@@ -421,22 +448,22 @@ class StudentServiceImplTest {
 
     @Test
     void getByAge_WithAllParameters_success() {
-        when(repository.findByAgeBetween(HARRY.getAge(), HERMIONE.getAge())).thenReturn(List.of(HARRY, HERMIONE));
+        when(repository.findByAgeBetween(HARRY_AGE, HERMIONE.getAge())).thenReturn(List.of(HARRY, HERMIONE));
 
-        assertEquals(List.of(HARRY, HERMIONE), studentService.getByAge(HARRY.getAge(), HERMIONE.getAge()));
+        assertEquals(List.of(HARRY, HERMIONE), studentService.getByAge(HARRY_AGE, HERMIONE.getAge()));
 
-        verify(checkService, times(1)).validateCheck(HARRY.getAge(), HERMIONE.getAge());
-        verify(repository, times(1)).findByAgeBetween(HARRY.getAge(), HERMIONE.getAge());
+        verify(checkService, times(1)).validateCheck(HARRY_AGE, HERMIONE.getAge());
+        verify(repository, times(1)).findByAgeBetween(HARRY_AGE, HERMIONE.getAge());
     }
 
     @Test
     void getByAge_WithAllParameters_InvalideInputException() {
-        when(repository.findByAgeBetween(HARRY.getAge(), HERMIONE.getAge())).thenThrow(InvalideInputException.class);
+        when(repository.findByAgeBetween(HARRY_AGE, HERMIONE.getAge())).thenThrow(InvalideInputException.class);
 
-        assertThrows(InvalideInputException.class, () -> studentService.getByAge(HARRY.getAge(), HERMIONE.getAge()));
+        assertThrows(InvalideInputException.class, () -> studentService.getByAge(HARRY_AGE, HERMIONE.getAge()));
 
-        verify(checkService, times(1)).validateCheck(HARRY.getAge(), HERMIONE.getAge());
-        verify(repository, times(1)).findByAgeBetween(HARRY.getAge(), HERMIONE.getAge());
+        verify(checkService, times(1)).validateCheck(HARRY_AGE, HERMIONE.getAge());
+        verify(repository, times(1)).findByAgeBetween(HARRY_AGE, HERMIONE.getAge());
     }
 
     @Test
@@ -450,12 +477,15 @@ class StudentServiceImplTest {
 
     @Test
     void getFacultyById_success() {
-        Student Harry = new Student(HARRY.getName(), HARRY.getAge(), GRIFFINDOR);
-        when(repository.findById(Harry.getId())).thenReturn(Optional.of(Harry));
+        GRIFFINDOR.setId(GRIFFINDOR_ID);
+        HARRY.setFaculty(GRIFFINDOR);
+        HARRY.setId(HARRY_ID);
 
-        assertEquals(GRIFFINDOR, studentService.getFacultyById(Harry.getId()));
+        when(repository.findById(HARRY_ID)).thenReturn(Optional.of(HARRY));
 
-        verify(checkService, times(1)).validateCheck(Harry.getId());
-        verify(repository, times(1)).findById(Harry.getId());
+        assertEquals(GRIFFINDOR, studentService.getFacultyById(HARRY_ID));
+
+        verify(checkService, times(1)).validateCheck(HARRY_ID);
+        verify(repository, times(1)).findById(HARRY_ID);
     }
 }

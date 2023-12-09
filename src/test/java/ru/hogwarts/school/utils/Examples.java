@@ -8,19 +8,30 @@ import java.util.List;
 public class Examples {
 
     public static final Long HARRY_ID = 1L;
+    public static final String HARRY_NAME = "Гарри Поттер";
+    public static final Integer HARRY_AGE = 11;
 
-    public static final Student HARRY = new Student("Гарри Поттер", 11, new Faculty());
-    public static final Student HERMIONE = new Student("Гермиона Грейнджер", 12, new Faculty());
-    public static final Student DRACO = new Student("Драко Малфой", 11, new Faculty());
+    public static final String HERMIONE_NAME = "Гермиона Грейнджер";
+    public static final Integer HERMIONE_AGE = 12;
+
+    public static final String DRACO_NAME = "Драко Малфой";
+    public static final Integer DRACO_AGE = 13;
+
+    public static final Student HARRY = new Student(HARRY_NAME, HARRY_AGE, new Faculty());
+    public static final Student HERMIONE = new Student(HERMIONE_NAME, HERMIONE_AGE, new Faculty());
+    public static final Student DRACO = new Student(DRACO_NAME, DRACO_AGE, new Faculty());
 
 
     public static final Long GRIFFINDOR_ID = 1L;
+    public static final String GRIFFINDOR_NAME = "Гриффиндор";
+    public static final String GRIFFINDOR_COLOR = "Красный";
+
     public static final Long SLYTHERIN_ID = 2L;
+    public static final String SLYTHERIN_NAME = "Слизерин";
+    public static final String SLYTHERIN_COLOR = "Зеленый";
 
-    public static final Faculty GRIFFINDOR = new Faculty("Гриффиндор", "красно-золотой");
-    public static final Faculty HUFFLEPUFF = new Faculty("Пуффендуй", "черно-желтый");
-
-    public static final Faculty EDIT_FACULTY = new Faculty(HUFFLEPUFF.getName(), HUFFLEPUFF.getColor());
+    public static final Faculty GRIFFINDOR = new Faculty(GRIFFINDOR_NAME, GRIFFINDOR_COLOR);
+    public static final Faculty SLYTHERIN = new Faculty(SLYTHERIN_NAME, SLYTHERIN_COLOR);
 
 
     public static List<Student> getStudents() {
@@ -30,4 +41,17 @@ public class Examples {
     public static List<Faculty> getFaculties() {
         return List.of(GRIFFINDOR);
     }
+
+
+    public static final Long INVALIDE_ID = 0L;
+
+    public static final String INVALIDE_NAME_STUDENT = "Гарри_Поттер_1";
+    public static final Integer INVALIDE_AGE_STUDENT = 0;
+
+    public static final String INVALIDE_NAME_FACULTY = "Гриффиндор_1";
+    public static final String INVALIDE_COLOR_FACULTY = "Красный_1";
+
+    public static final String MESSAGE_INVALIDE_DATES = "Code: 400 BAD_REQUEST. Error: ВВЕДЕНЫ НЕКОРРЕКТНЫЕ ДАННЫЕ!";
+    public static final String MESSAGE_FACULTY_NOT_FOUND = "Code: 404 NOT_FOUND. Error: ФАКУЛЬТЕТ НЕ НАЙДЕН!";
+    public static final String MESSAGE_STUDENT_NOT_FOUND = "Code: 404 NOT_FOUND. Error: СТУДЕНТ НЕ НАЙДЕН!";
 }
