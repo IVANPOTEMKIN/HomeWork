@@ -54,4 +54,8 @@ public class Examples {
     public static final String MESSAGE_INVALIDE_DATES = "Code: 400 BAD_REQUEST. Error: ВВЕДЕНЫ НЕКОРРЕКТНЫЕ ДАННЫЕ!";
     public static final String MESSAGE_FACULTY_NOT_FOUND = "Code: 404 NOT_FOUND. Error: ФАКУЛЬТЕТ НЕ НАЙДЕН!";
     public static final String MESSAGE_STUDENT_NOT_FOUND = "Code: 404 NOT_FOUND. Error: СТУДЕНТ НЕ НАЙДЕН!";
+
+    public static final Integer AMOUNT_FACULTIES = 4;
+    public static final Integer AMOUNT_STUDENTS = 15;
+    public static final Double AVG_AGE_STUDENTS = 13.3;
 }

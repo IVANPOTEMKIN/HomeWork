@@ -14,6 +14,7 @@ import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 import ru.hogwarts.school.service.impl.StudentServiceImpl;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Optional;
 
@@ -522,7 +523,6 @@ class StudentServiceImplTest {
 
         verify(repository, times(1))
                 .findAll();
-
     }
 
     @Test
@@ -634,5 +634,42 @@ class StudentServiceImplTest {
                 .validateCheck(HARRY_ID);
         verify(repository, times(1))
                 .findById(HARRY_ID);
+    }
+
+    @Test
+    void getAmountAllFaculties_success() {
+        when(repository.getAmountAllStudents())
+                .thenReturn(AMOUNT_STUDENTS);
+
+        assertEquals(AMOUNT_STUDENTS,
+                studentService.getAmountAllStudents());
+
+        verify(repository, times(1))
+                .getAmountAllStudents();
+    }
+
+    @Test
+    void getAvgAgeStudents_success() {
+        DecimalFormat numberFormat = new DecimalFormat("#.#");
+
+        when(repository.getAvgAgeStudents())
+                .thenReturn(AVG_AGE_STUDENTS);
+
+        assertEquals(numberFormat.format(AVG_AGE_STUDENTS),
+                studentService.getAvgAgeStudents());
+
+        verify(repository, times(1))
+                .getAvgAgeStudents();
+    }
+
+    @Test
+    void getLastFiveStudents_success() {
+        when(repository.getLastFiveStudents())
+                .thenReturn(getStudents());
+
+        assertEquals(getStudents(), studentService.getLastFiveStudents());
+
+        verify(repository, times(1))
+                .getLastFiveStudents();
     }
 }

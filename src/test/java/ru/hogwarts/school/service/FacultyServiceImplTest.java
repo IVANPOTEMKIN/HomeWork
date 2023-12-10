@@ -393,4 +393,16 @@ class FacultyServiceImplTest {
         verify(repository, times(1))
                 .findById(GRIFFINDOR_ID);
     }
+
+    @Test
+    void getAmountAllFaculties_success() {
+        when(repository.getAmountAllFaculties())
+                .thenReturn(AMOUNT_FACULTIES);
+
+        assertEquals(AMOUNT_FACULTIES,
+                facultyService.getAmountAllFaculties());
+
+        verify(repository, times(1))
+                .getAmountAllFaculties();
+    }
 }

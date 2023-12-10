@@ -129,6 +129,17 @@ class FacultyControllerTests {
     }
 
     @Test
+    void testGetAmountAllFaculties_success() throws Exception {
+        when(facultyRepository.getAmountAllFaculties())
+                .thenReturn(AMOUNT_FACULTIES);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/faculty/amount-all-faculties"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(Integer.toString(AMOUNT_FACULTIES)));
+    }
+
+    @Test
     void testGetByNameOrColor_WithOnlyName_success() throws Exception {
         when(facultyRepository.findByNameContainsIgnoreCase(any(String.class)))
                 .thenReturn(List.of(GRIFFINDOR));

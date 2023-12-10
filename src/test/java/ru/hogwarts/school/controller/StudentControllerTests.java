@@ -20,6 +20,7 @@ import ru.hogwarts.school.service.impl.CheckServiceImpl;
 import ru.hogwarts.school.service.impl.FacultyServiceImpl;
 import ru.hogwarts.school.service.impl.StudentServiceImpl;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Optional;
 
@@ -147,6 +148,28 @@ class StudentControllerTests {
     }
 
     @Test
+    void testGetLastFiveStudents_success() throws Exception {
+        when(studentRepository.getLastFiveStudents())
+                .thenReturn(getStudents());
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/student/last-five-students"))
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(getStudents())));
+    }
+
+    @Test
+    void testGetAmountAllFaculties_success() throws Exception {
+        when(studentRepository.getAmountAllStudents())
+                .thenReturn(AMOUNT_STUDENTS);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/student/amount-all-students"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(Integer.toString(AMOUNT_STUDENTS)));
+    }
+
+    @Test
     void testGetByAge_WithOnlyFirstParameter_success() throws Exception {
         when(studentRepository.findByAge(any(Integer.class)))
                 .thenReturn(List.of(HARRY));
@@ -220,6 +243,19 @@ class StudentControllerTests {
                         .get("/student"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(getStudents())));
+    }
+
+    @Test
+    void testGetAvgAgeStudents_success() throws Exception {
+        DecimalFormat decimalFormat = new DecimalFormat("#.#");
+
+        when(studentRepository.getAvgAgeStudents())
+                .thenReturn(AVG_AGE_STUDENTS);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/student/average-age-students"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(decimalFormat.format(AVG_AGE_STUDENTS)));
     }
 
     @Test
