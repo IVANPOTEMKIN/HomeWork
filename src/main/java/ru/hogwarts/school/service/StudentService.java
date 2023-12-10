@@ -19,4 +19,10 @@ public interface StudentService {
     Collection<Student> getByAge(Integer minAge, Integer maxAge);
 
     Faculty getFacultyById(Long id);
+
+    Integer getAmountAllStudents();
+
+    String getAvgAgeStudents();
+
+    Collection<Student> getLastFiveStudents();
 }

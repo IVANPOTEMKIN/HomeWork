@@ -39,6 +39,11 @@ public class FacultyController {
         return service.getAll();
     }
 
+    @GetMapping("/amount-all-faculties")
+    public Integer getAmountAllFaculties() {
+        return service.getAmountAllFaculties();
+    }
+
     @GetMapping
     public Collection<Faculty> getByNameOrColor(@RequestParam(required = false) String name,
                                                 @RequestParam(required = false) String color) {

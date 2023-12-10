@@ -98,4 +98,9 @@ public class FacultyServiceImpl implements FacultyService {
     public Collection<Student> getStudentsByFacultyId(Long id) {
         return get(id).getStudents();
     }
+
+    @Override
+    public Integer getAmountAllFaculties() {
+        return repository.getAmountAllFaculties();
+    }
 }

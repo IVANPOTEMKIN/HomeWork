@@ -4,10 +4,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import ru.hogwarts.school.model.Avatar;
 import ru.hogwarts.school.service.AvatarService;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collection;
 
 @RestController
 @RequestMapping("/avatar")
@@ -23,6 +25,12 @@ public class AvatarController {
     public ResponseEntity<String> uploadAvatar(@PathVariable Long studentId,
                                                @RequestParam MultipartFile avatar) throws IOException {
         return service.uploadAvatar(studentId, avatar);
+    }
+
+    @GetMapping("/all")
+    public Collection<Avatar> getAll(@RequestParam Integer pageNumber,
+                                     @RequestParam Integer pageSize) {
+        return service.getAll(pageNumber, pageSize);
     }
 
     @GetMapping(value = "/{id}/avatar-from-db")

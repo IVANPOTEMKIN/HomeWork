@@ -10,6 +10,7 @@ import ru.hogwarts.school.service.CheckService;
 import ru.hogwarts.school.service.FacultyService;
 import ru.hogwarts.school.service.StudentService;
 
+import java.text.DecimalFormat;
 import java.util.Collection;
 
 @Service
@@ -131,5 +132,21 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public Faculty getFacultyById(Long id) {
         return get(id).getFaculty();
+    }
+
+    @Override
+    public Integer getAmountAllStudents() {
+        return repository.getAmountAllStudents();
+    }
+
+    @Override
+    public String getAvgAgeStudents() {
+        DecimalFormat numberFormat = new DecimalFormat("#.#");
+        return numberFormat.format(repository.getAvgAgeStudents());
+    }
+
+    @Override
+    public Collection<Student> getLastFiveStudents() {
+        return repository.getLastFiveStudents();
     }
 }

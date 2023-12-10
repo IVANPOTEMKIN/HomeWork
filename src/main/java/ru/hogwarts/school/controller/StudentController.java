@@ -40,10 +40,25 @@ public class StudentController {
         return service.getAll();
     }
 
+    @GetMapping("/last-five-students")
+    public Collection<Student> getLastFiveStudents() {
+        return service.getLastFiveStudents();
+    }
+
+    @GetMapping("/amount-all-students")
+    public Integer getAmountAllStudents() {
+        return service.getAmountAllStudents();
+    }
+
     @GetMapping
     public Collection<Student> getByAge(@RequestParam(required = false) Integer minAge,
                                         @RequestParam(required = false) Integer maxAge) {
         return service.getByAge(minAge, maxAge);
+    }
+
+    @GetMapping("/average-age-students")
+    public String getAvgAgeStudents() {
+        return service.getAvgAgeStudents();
     }
 
     @GetMapping(params = "id")
