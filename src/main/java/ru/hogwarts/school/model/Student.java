@@ -45,9 +45,7 @@ public class Student {
     public void setName(String name) {
         if (name != null
                 && !name.isBlank()
-                && name.matches("[а-яА-Я -]+")
-                && !name.equalsIgnoreCase(faculty.getName())
-                && !name.equalsIgnoreCase(faculty.getColor())) {
+                && name.matches("[а-яА-Я -]+")) {
             this.name = name;
             return;
         }

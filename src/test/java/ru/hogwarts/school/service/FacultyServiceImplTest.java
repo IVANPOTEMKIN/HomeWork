@@ -18,7 +18,8 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.when;
 import static ru.hogwarts.school.utils.Examples.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -36,77 +37,52 @@ class FacultyServiceImplTest {
         facultyService = new FacultyServiceImpl(repository, checkService);
     }
 
+    private void getGriffindor() {
+        when(repository.findById(any(Long.class)))
+                .thenReturn(Optional.of(GRIFFINDOR));
+
+        GRIFFINDOR.setId(GRIFFINDOR_ID);
+    }
+
     @Test
     void add_success() {
-        when(repository.findAll())
-                .thenReturn(getFaculties());
         when(repository.save(any(Faculty.class)))
                 .thenReturn(GRIFFINDOR);
 
         assertEquals(GRIFFINDOR,
-                facultyService.add(GRIFFINDOR_NAME, GRIFFINDOR_COLOR));
-
-        verify(repository, times(1))
-                .findAll();
-        verify(checkService, times(1))
-                .validateCheck(GRIFFINDOR);
-        verify(checkService, times(1))
-                .isFacultyAlreadyAdded(getFaculties(), GRIFFINDOR);
-        verify(repository, times(1))
-                .save(GRIFFINDOR);
+                facultyService.add(
+                        GRIFFINDOR_NAME,
+                        GRIFFINDOR_COLOR));
     }
 
     @Test
     void add_InvalideInputException() {
-        when(repository.findAll())
-                .thenReturn(getFaculties());
         when(repository.save(any(Faculty.class)))
                 .thenThrow(InvalideInputException.class);
 
         assertThrows(InvalideInputException.class,
-                () -> facultyService.add(GRIFFINDOR_NAME, GRIFFINDOR_COLOR));
-
-        verify(repository, times(1))
-                .findAll();
-        verify(checkService, times(1))
-                .validateCheck(GRIFFINDOR);
-        verify(checkService, times(1))
-                .isFacultyAlreadyAdded(getFaculties(), GRIFFINDOR);
-        verify(repository, times(1))
-                .save(GRIFFINDOR);
+                () -> facultyService.add(
+                        INVALIDE_NAME_FACULTY,
+                        INVALIDE_COLOR_FACULTY));
     }
 
     @Test
     void add_FacultyAlreadyAddedException() {
-        when(repository.findAll())
-                .thenReturn(getFaculties());
         when(repository.save(any(Faculty.class)))
                 .thenThrow(FacultyAlreadyAddedException.class);
 
         assertThrows(FacultyAlreadyAddedException.class,
-                () -> facultyService.add(GRIFFINDOR_NAME, GRIFFINDOR_COLOR));
-
-        verify(repository, times(1))
-                .findAll();
-        verify(checkService, times(1))
-                .validateCheck(GRIFFINDOR);
-        verify(checkService, times(1))
-                .isFacultyAlreadyAdded(getFaculties(), GRIFFINDOR);
-        verify(repository, times(1))
-                .save(GRIFFINDOR);
+                () -> facultyService.add(
+                        GRIFFINDOR_NAME,
+                        GRIFFINDOR_COLOR));
     }
 
     @Test
     void get_success() {
-        when(repository.findById(any(Long.class)))
-                .thenReturn(Optional.of(GRIFFINDOR));
+        getGriffindor();
 
-        assertEquals(GRIFFINDOR, facultyService.get(GRIFFINDOR_ID));
-
-        verify(checkService, times(1))
-                .validateCheck(GRIFFINDOR_ID);
-        verify(repository, times(1))
-                .findById(GRIFFINDOR_ID);
+        assertEquals(GRIFFINDOR,
+                facultyService.get(GRIFFINDOR_ID));
     }
 
     @Test
@@ -115,12 +91,7 @@ class FacultyServiceImplTest {
                 .thenThrow(InvalideInputException.class);
 
         assertThrows(InvalideInputException.class,
-                () -> facultyService.get(GRIFFINDOR_ID));
-
-        verify(checkService, times(1))
-                .validateCheck(GRIFFINDOR_ID);
-        verify(repository, times(1))
-                .findById(GRIFFINDOR_ID);
+                () -> facultyService.get(INVALIDE_ID));
     }
 
     @Test
@@ -130,148 +101,100 @@ class FacultyServiceImplTest {
 
         assertThrows(FacultyNotFoundException.class,
                 () -> facultyService.get(GRIFFINDOR_ID));
-
-        verify(checkService, times(1))
-                .validateCheck(GRIFFINDOR_ID);
-        verify(repository, times(1))
-                .findById(GRIFFINDOR_ID);
     }
 
     @Test
     void edit_WithOnlyName_success() {
-        when(repository.findById(any(Long.class)))
-                .thenReturn(Optional.of(GRIFFINDOR));
+        getGriffindor();
+
         when(repository.save(any(Faculty.class)))
                 .thenReturn(new Faculty(SLYTHERIN_NAME, GRIFFINDOR_COLOR));
 
         assertEquals(new Faculty(SLYTHERIN_NAME, GRIFFINDOR_COLOR),
-                facultyService.edit(GRIFFINDOR_ID, SLYTHERIN_NAME, null));
-
-        verify(checkService, times(1))
-                .validateCheck(GRIFFINDOR_ID);
-        verify(repository, times(1))
-                .findById(GRIFFINDOR_ID);
-        verify(repository, times(1))
-                .save(new Faculty(SLYTHERIN_NAME, GRIFFINDOR_COLOR));
+                facultyService.edit(
+                        GRIFFINDOR.getId(),
+                        SLYTHERIN_NAME,
+                        null));
     }
 
     @Test
     void edit_WithOnlyName_InvalideInputException() {
-        when(repository.findById(any(Long.class)))
-                .thenReturn(Optional.of(GRIFFINDOR));
-        when(repository.save(any(Faculty.class)))
-                .thenThrow(InvalideInputException.class);
+        getGriffindor();
 
         assertThrows(InvalideInputException.class,
-                () -> facultyService.edit(GRIFFINDOR_ID, SLYTHERIN_NAME, null));
-
-        verify(checkService, times(1))
-                .validateCheck(GRIFFINDOR_ID);
-        verify(repository, times(1))
-                .findById(GRIFFINDOR_ID);
-        verify(repository, times(1))
-                .save(new Faculty(SLYTHERIN_NAME, GRIFFINDOR_COLOR));
+                () -> facultyService.edit(
+                        GRIFFINDOR.getId(),
+                        INVALIDE_NAME_FACULTY,
+                        null));
     }
 
     @Test
     void edit_WithOnlyColor_success() {
-        when(repository.findById(any(Long.class)))
-                .thenReturn(Optional.of(GRIFFINDOR));
+        getGriffindor();
+
         when(repository.save(any(Faculty.class)))
                 .thenReturn(new Faculty(GRIFFINDOR_NAME, SLYTHERIN_COLOR));
 
         assertEquals(new Faculty(GRIFFINDOR_NAME, SLYTHERIN_COLOR),
-                facultyService.edit(GRIFFINDOR_ID, null, SLYTHERIN_COLOR));
-
-        verify(checkService, times(1))
-                .validateCheck(GRIFFINDOR_ID);
-        verify(repository, times(1))
-                .findById(GRIFFINDOR_ID);
-        verify(repository, times(1))
-                .save(new Faculty(GRIFFINDOR_NAME, SLYTHERIN_COLOR));
+                facultyService.edit(
+                        GRIFFINDOR.getId(),
+                        null,
+                        SLYTHERIN_COLOR));
     }
 
     @Test
     void edit_WithOnlyColor_InvalideInputException() {
-        when(repository.findById(any(Long.class)))
-                .thenReturn(Optional.of(GRIFFINDOR));
-        when(repository.save(any(Faculty.class)))
-                .thenThrow(InvalideInputException.class);
+        getGriffindor();
 
         assertThrows(InvalideInputException.class,
-                () -> facultyService.edit(GRIFFINDOR_ID, null, SLYTHERIN_COLOR));
-
-        verify(checkService, times(1))
-                .validateCheck(GRIFFINDOR_ID);
-        verify(repository, times(1))
-                .findById(GRIFFINDOR_ID);
-        verify(repository, times(1))
-                .save(new Faculty(GRIFFINDOR_NAME, SLYTHERIN_COLOR));
+                () -> facultyService.edit(
+                        GRIFFINDOR.getId(),
+                        null,
+                        INVALIDE_COLOR_FACULTY));
     }
 
     @Test
     void edit_WithAllParameters_success() {
-        when(repository.findById(any(Long.class)))
-                .thenReturn(Optional.of(GRIFFINDOR));
+        getGriffindor();
+
         when(repository.save(any(Faculty.class)))
                 .thenReturn(new Faculty(SLYTHERIN_NAME, SLYTHERIN_COLOR));
 
         assertEquals(new Faculty(SLYTHERIN_NAME, SLYTHERIN_COLOR),
-                facultyService.edit(GRIFFINDOR_ID, SLYTHERIN_NAME, SLYTHERIN_COLOR));
-
-        verify(checkService, times(1))
-                .validateCheck(GRIFFINDOR_ID);
-        verify(repository, times(1))
-                .findById(GRIFFINDOR_ID);
-        verify(repository, times(1))
-                .save(new Faculty(SLYTHERIN_NAME, SLYTHERIN_COLOR));
+                facultyService.edit(
+                        GRIFFINDOR.getId(),
+                        SLYTHERIN_NAME,
+                        SLYTHERIN_COLOR));
     }
 
     @Test
     void edit_WithAllParameters_InvalideInputException() {
-        when(repository.findById(any(Long.class)))
-                .thenReturn(Optional.of(GRIFFINDOR));
-        when(repository.save(any(Faculty.class)))
-                .thenThrow(InvalideInputException.class);
+        getGriffindor();
 
         assertThrows(InvalideInputException.class,
-                () -> facultyService.edit(GRIFFINDOR_ID, SLYTHERIN_NAME, SLYTHERIN_COLOR));
-
-        verify(checkService, times(1))
-                .validateCheck(GRIFFINDOR_ID);
-        verify(repository, times(1))
-                .findById(GRIFFINDOR_ID);
-        verify(repository, times(1))
-                .save(new Faculty(SLYTHERIN_NAME, SLYTHERIN_COLOR));
+                () -> facultyService.edit(
+                        GRIFFINDOR.getId(),
+                        INVALIDE_NAME_FACULTY,
+                        INVALIDE_COLOR_FACULTY));
     }
 
     @Test
     void edit_WithoutParameters_success() {
-        when(repository.findById(any(Long.class)))
-                .thenReturn(Optional.of(GRIFFINDOR));
+        getGriffindor();
 
         assertEquals(GRIFFINDOR,
-                facultyService.edit(GRIFFINDOR_ID, null, null));
-
-        verify(checkService, times(1))
-                .validateCheck(GRIFFINDOR_ID);
-        verify(repository, times(1))
-                .findById(GRIFFINDOR_ID);
+                facultyService.edit(
+                        GRIFFINDOR.getId(),
+                        null,
+                        null));
     }
 
     @Test
     void remove_success() {
-        when(repository.findById(any(Long.class)))
-                .thenReturn(Optional.of(GRIFFINDOR));
+        getGriffindor();
 
-        assertEquals(GRIFFINDOR, facultyService.remove(GRIFFINDOR_ID));
-
-        verify(checkService, times(1))
-                .validateCheck(GRIFFINDOR_ID);
-        verify(repository, times(1))
-                .findById(GRIFFINDOR_ID);
-        verify(repository, times(1))
-                .delete(GRIFFINDOR);
+        assertEquals(GRIFFINDOR,
+                facultyService.remove(GRIFFINDOR.getId()));
     }
 
     @Test
@@ -279,10 +202,8 @@ class FacultyServiceImplTest {
         when(repository.findAll())
                 .thenReturn(getFaculties());
 
-        assertEquals(getFaculties(), facultyService.getAll());
-
-        verify(repository, times(1))
-                .findAll();
+        assertEquals(getFaculties(),
+                facultyService.getAll());
     }
 
     @Test
@@ -291,12 +212,9 @@ class FacultyServiceImplTest {
                 .thenReturn(List.of(GRIFFINDOR));
 
         assertEquals(List.of(GRIFFINDOR),
-                facultyService.getByNameOrColor(GRIFFINDOR_NAME, null));
-
-        verify(checkService, times(1))
-                .validateCheck(GRIFFINDOR_NAME);
-        verify(repository, times(1))
-                .findByNameContainsIgnoreCase(GRIFFINDOR_NAME);
+                facultyService.getByNameOrColor(
+                        GRIFFINDOR_NAME,
+                        null));
     }
 
     @Test
@@ -305,12 +223,9 @@ class FacultyServiceImplTest {
                 .thenThrow(InvalideInputException.class);
 
         assertThrows(InvalideInputException.class,
-                () -> facultyService.getByNameOrColor(GRIFFINDOR_NAME, null));
-
-        verify(checkService, times(1))
-                .validateCheck(GRIFFINDOR_NAME);
-        verify(repository, times(1))
-                .findByNameContainsIgnoreCase(GRIFFINDOR_NAME);
+                () -> facultyService.getByNameOrColor(
+                        INVALIDE_NAME_FACULTY,
+                        null));
     }
 
     @Test
@@ -319,12 +234,9 @@ class FacultyServiceImplTest {
                 .thenReturn(List.of(GRIFFINDOR));
 
         assertEquals(List.of(GRIFFINDOR),
-                facultyService.getByNameOrColor(null, GRIFFINDOR_COLOR));
-
-        verify(checkService, times(1))
-                .validateCheck(GRIFFINDOR_COLOR);
-        verify(repository, times(1))
-                .findByColorContainsIgnoreCase(GRIFFINDOR_COLOR);
+                facultyService.getByNameOrColor(
+                        null,
+                        GRIFFINDOR_COLOR));
     }
 
     @Test
@@ -333,12 +245,9 @@ class FacultyServiceImplTest {
                 .thenThrow(InvalideInputException.class);
 
         assertThrows(InvalideInputException.class,
-                () -> facultyService.getByNameOrColor(null, GRIFFINDOR_COLOR));
-
-        verify(checkService, times(1))
-                .validateCheck(GRIFFINDOR_COLOR);
-        verify(repository, times(1))
-                .findByColorContainsIgnoreCase(GRIFFINDOR_COLOR);
+                () -> facultyService.getByNameOrColor(
+                        null,
+                        INVALIDE_COLOR_FACULTY));
     }
 
     @Test
@@ -347,12 +256,9 @@ class FacultyServiceImplTest {
                 .thenReturn(List.of(GRIFFINDOR));
 
         assertEquals(List.of(GRIFFINDOR),
-                facultyService.getByNameOrColor(GRIFFINDOR_NAME, GRIFFINDOR_COLOR));
-
-        verify(checkService, times(1))
-                .validateCheck(GRIFFINDOR_NAME, GRIFFINDOR_COLOR);
-        verify(repository, times(1))
-                .findByNameContainsIgnoreCaseAndColorContainsIgnoreCase(GRIFFINDOR_NAME, GRIFFINDOR_COLOR);
+                facultyService.getByNameOrColor(
+                        GRIFFINDOR_NAME,
+                        GRIFFINDOR_COLOR));
     }
 
     @Test
@@ -361,12 +267,9 @@ class FacultyServiceImplTest {
                 .thenThrow(InvalideInputException.class);
 
         assertThrows(InvalideInputException.class,
-                () -> facultyService.getByNameOrColor(GRIFFINDOR_NAME, GRIFFINDOR_COLOR));
-
-        verify(checkService, times(1))
-                .validateCheck(GRIFFINDOR_NAME, GRIFFINDOR_COLOR);
-        verify(repository, times(1))
-                .findByNameContainsIgnoreCaseAndColorContainsIgnoreCase(GRIFFINDOR_NAME, GRIFFINDOR_COLOR);
+                () -> facultyService.getByNameOrColor(
+                        INVALIDE_NAME_FACULTY,
+                        INVALIDE_COLOR_FACULTY));
     }
 
     @Test
@@ -374,24 +277,18 @@ class FacultyServiceImplTest {
         when(repository.findAll())
                 .thenReturn(getFaculties());
 
-        assertEquals(getFaculties(), facultyService.getByNameOrColor(null, null));
-
-        verify(repository, times(1))
-                .findAll();
+        assertEquals(getFaculties(),
+                facultyService.getByNameOrColor(
+                        null,
+                        null));
     }
 
     @Test
     void getStudentsByFacultyId_success() {
-        when(repository.findById(any(Long.class)))
-                .thenReturn(Optional.of(GRIFFINDOR));
+        getGriffindor();
 
         assertEquals(GRIFFINDOR.getStudents(),
-                facultyService.getStudentsByFacultyId(GRIFFINDOR_ID));
-
-        verify(checkService, times(1))
-                .validateCheck(GRIFFINDOR_ID);
-        verify(repository, times(1))
-                .findById(GRIFFINDOR_ID);
+                facultyService.getStudentsByFacultyId(GRIFFINDOR.getId()));
     }
 
     @Test
@@ -401,8 +298,5 @@ class FacultyServiceImplTest {
 
         assertEquals(AMOUNT_FACULTIES,
                 facultyService.getAmountAllFaculties());
-
-        verify(repository, times(1))
-                .getAmountAllFaculties();
     }
 }

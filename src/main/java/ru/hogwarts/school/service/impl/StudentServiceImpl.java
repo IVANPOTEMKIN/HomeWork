@@ -31,8 +31,8 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Student add(String name, Integer age, Long facultyId) {
-        Student newStudent = new Student(name, age, new Faculty());
-        newStudent.getFaculty().setId(facultyService.get(facultyId).getId());
+        Faculty faculty = facultyService.get(facultyId);
+        Student newStudent = new Student(name, age, faculty);
 
         checkService.validateCheck(newStudent);
         checkService.isStudentAlreadyAdded(getAll(), newStudent);
@@ -63,8 +63,7 @@ public class StudentServiceImpl implements StudentService {
 
         if (name != null & age == null & facultyId != null) {
             updateStudent.setName(name);
-            updateStudent.setFaculty(new Faculty());
-            updateStudent.getFaculty().setId(facultyService.get(facultyId).getId());
+            updateStudent.setFaculty(facultyService.get(facultyId));
             return repository.save(updateStudent);
         }
 
@@ -75,14 +74,12 @@ public class StudentServiceImpl implements StudentService {
 
         if (name == null & age != null & facultyId != null) {
             updateStudent.setAge(age);
-            updateStudent.setFaculty(new Faculty());
-            updateStudent.getFaculty().setId(facultyService.get(facultyId).getId());
+            updateStudent.setFaculty(facultyService.get(facultyId));
             return repository.save(updateStudent);
         }
 
         if (name == null & age == null & facultyId != null) {
-            updateStudent.setFaculty(new Faculty());
-            updateStudent.getFaculty().setId(facultyService.get(facultyId).getId());
+            updateStudent.setFaculty(facultyService.get(facultyId));
             return repository.save(updateStudent);
         }
 
@@ -92,8 +89,7 @@ public class StudentServiceImpl implements StudentService {
 
         updateStudent.setName(name);
         updateStudent.setAge(age);
-        updateStudent.setFaculty(new Faculty());
-        updateStudent.getFaculty().setId(facultyService.get(facultyId).getId());
+        updateStudent.setFaculty(facultyService.get(facultyId));
         return repository.save(updateStudent);
     }
 

@@ -1,4 +1,4 @@
-package ru.hogwarts.school.controller;
+package ru.hogwarts.school.controller.WebMvcTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -9,6 +9,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import ru.hogwarts.school.controller.FacultyController;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.repository.AvatarRepository;
 import ru.hogwarts.school.repository.FacultyRepository;
@@ -27,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static ru.hogwarts.school.utils.Examples.*;
 
 @WebMvcTest
-class FacultyControllerTests {
+class FacultyControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -42,30 +43,42 @@ class FacultyControllerTests {
     @SpyBean
     private StudentServiceImpl studentService;
     @SpyBean
-    private CheckServiceImpl checkService;
-    @SpyBean
     private AvatarServiceImpl avatarService;
+    @SpyBean
+    private CheckServiceImpl checkService;
     @InjectMocks
     private FacultyController controller;
 
     ObjectMapper objectMapper = new ObjectMapper();
 
-    @Test
-    void testAdd_success() throws Exception {
-        when(facultyRepository.save(any(Faculty.class)))
+    private void addGriffindor() {
+        when(facultyService.add(GRIFFINDOR_NAME, GRIFFINDOR_COLOR))
                 .thenReturn(GRIFFINDOR);
+        GRIFFINDOR.setId(GRIFFINDOR_ID);
+    }
+
+    private void getGriffindor() {
+        when(facultyRepository.findById(any(Long.class)))
+                .thenReturn(Optional.of(GRIFFINDOR));
+        GRIFFINDOR.setId(GRIFFINDOR_ID);
+    }
+
+    @Test
+    void add_success() throws Exception {
+        addGriffindor();
 
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/faculty"
                                 + "?name=" + GRIFFINDOR_NAME
                                 + "&color=" + GRIFFINDOR_COLOR))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value(GRIFFINDOR_NAME))
-                .andExpect(jsonPath("$.color").value(GRIFFINDOR_COLOR));
+                .andExpect(jsonPath("$.id").value(GRIFFINDOR.getId()))
+                .andExpect(jsonPath("$.name").value(GRIFFINDOR.getName()))
+                .andExpect(jsonPath("$.color").value(GRIFFINDOR.getColor()));
     }
 
     @Test
-    void testAdd_InvalideInputException() throws Exception {
+    void add_InvalideInputException() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/faculty"
                                 + "?name=" + INVALIDE_NAME_FACULTY
@@ -75,34 +88,36 @@ class FacultyControllerTests {
     }
 
     @Test
-    void testAdd_FacultyAlreadyAddedException() throws Exception {
-        when(facultyRepository.findAll())
+    void add_FacultyAlreadyAddedException() throws Exception {
+        addGriffindor();
+
+        when(facultyService.getAll())
                 .thenReturn(getFaculties());
 
         String expected = "Code: 400 BAD_REQUEST. Error: ФАКУЛЬТЕТ УЖЕ ДОБАВЛЕН!";
 
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/faculty"
-                                + "?name=" + GRIFFINDOR_NAME
-                                + "&color=" + GRIFFINDOR_COLOR))
+                                + "?name=" + GRIFFINDOR.getName()
+                                + "&color=" + GRIFFINDOR.getColor()))
                 .andExpect(status().isOk())
                 .andExpect(content().string(expected));
     }
 
     @Test
-    void testGet_success() throws Exception {
-        when(facultyRepository.findById(any(Long.class)))
-                .thenReturn(Optional.of(GRIFFINDOR));
+    void get_success() throws Exception {
+        getGriffindor();
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .get("/faculty/" + GRIFFINDOR_ID))
+                        .get("/faculty/" + GRIFFINDOR.getId()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value(GRIFFINDOR_NAME))
-                .andExpect(jsonPath("$.color").value(GRIFFINDOR_COLOR));
+                .andExpect(jsonPath("$.id").value(GRIFFINDOR.getId()))
+                .andExpect(jsonPath("$.name").value(GRIFFINDOR.getName()))
+                .andExpect(jsonPath("$.color").value(GRIFFINDOR.getColor()));
     }
 
     @Test
-    void testGet_InvalideInputException() throws Exception {
+    void get_InvalideInputException() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/faculty/" + INVALIDE_ID))
                 .andExpect(status().isOk())
@@ -110,7 +125,7 @@ class FacultyControllerTests {
     }
 
     @Test
-    void testGet_FacultyNotFoundException() throws Exception {
+    void get_FacultyNotFoundException() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/faculty/" + GRIFFINDOR_ID))
                 .andExpect(status().isOk())
@@ -118,8 +133,8 @@ class FacultyControllerTests {
     }
 
     @Test
-    void testGetAll_success() throws Exception {
-        when(facultyRepository.findAll())
+    void getAll_success() throws Exception {
+        when(facultyService.getAll())
                 .thenReturn(getFaculties());
 
         mockMvc.perform(MockMvcRequestBuilders
@@ -129,8 +144,8 @@ class FacultyControllerTests {
     }
 
     @Test
-    void testGetAmountAllFaculties_success() throws Exception {
-        when(facultyRepository.getAmountAllFaculties())
+    void getAmountAllFaculties_success() throws Exception {
+        when(facultyService.getAmountAllFaculties())
                 .thenReturn(AMOUNT_FACULTIES);
 
         mockMvc.perform(MockMvcRequestBuilders
@@ -140,8 +155,8 @@ class FacultyControllerTests {
     }
 
     @Test
-    void testGetByNameOrColor_WithOnlyName_success() throws Exception {
-        when(facultyRepository.findByNameContainsIgnoreCase(any(String.class)))
+    void getByNameOrColor_WithOnlyName_success() throws Exception {
+        when(facultyService.getByNameOrColor(GRIFFINDOR_NAME, null))
                 .thenReturn(List.of(GRIFFINDOR));
 
         mockMvc.perform(MockMvcRequestBuilders
@@ -152,7 +167,7 @@ class FacultyControllerTests {
     }
 
     @Test
-    void testGetByNameOrColor_WithOnlyName_InvalideInputException() throws Exception {
+    void getByNameOrColor_WithOnlyName_InvalideInputException() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/faculty"
                                 + "?name=" + INVALIDE_NAME_FACULTY))
@@ -161,8 +176,8 @@ class FacultyControllerTests {
     }
 
     @Test
-    void testGetByNameOrColor_WithOnlyColor_success() throws Exception {
-        when(facultyRepository.findByColorContainsIgnoreCase(any(String.class)))
+    void getByNameOrColor_WithOnlyColor_success() throws Exception {
+        when(facultyService.getByNameOrColor(null, GRIFFINDOR_COLOR))
                 .thenReturn(List.of(GRIFFINDOR));
 
         mockMvc.perform(MockMvcRequestBuilders
@@ -173,7 +188,7 @@ class FacultyControllerTests {
     }
 
     @Test
-    void testGetByNameOrColor_WithOnlyColor_InvalideInputException() throws Exception {
+    void getByNameOrColor_WithOnlyColor_InvalideInputException() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/faculty"
                                 + "?color=" + INVALIDE_COLOR_FACULTY))
@@ -182,8 +197,8 @@ class FacultyControllerTests {
     }
 
     @Test
-    void testGetByNameOrColor_WithAllParameters_success() throws Exception {
-        when(facultyRepository.findByNameContainsIgnoreCaseAndColorContainsIgnoreCase(any(String.class), any(String.class)))
+    void getByNameOrColor_WithAllParameters_success() throws Exception {
+        when(facultyService.getByNameOrColor(GRIFFINDOR_NAME, GRIFFINDOR_COLOR))
                 .thenReturn(List.of(GRIFFINDOR));
 
         mockMvc.perform(MockMvcRequestBuilders
@@ -195,7 +210,7 @@ class FacultyControllerTests {
     }
 
     @Test
-    void testGetByNameOrColor_WithAllParameters_InvalideInputException() throws Exception {
+    void getByNameOrColor_WithAllParameters_InvalideInputException() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/faculty"
                                 + "?name=" + INVALIDE_NAME_FACULTY
@@ -205,8 +220,8 @@ class FacultyControllerTests {
     }
 
     @Test
-    void testGetByNameOrColor_WithoutParameters_success() throws Exception {
-        when(facultyRepository.findAll())
+    void getByNameOrColor_WithoutParameters_success() throws Exception {
+        when(facultyService.getByNameOrColor(null, null))
                 .thenReturn(getFaculties());
 
         mockMvc.perform(MockMvcRequestBuilders
@@ -216,41 +231,43 @@ class FacultyControllerTests {
     }
 
     @Test
-    void testGetStudentsByFacultyId_success() throws Exception {
-        when(facultyRepository.findById(any(Long.class)))
-                .thenReturn(Optional.of(GRIFFINDOR));
+    void getStudentsByFacultyId_success() throws Exception {
+        getGriffindor();
 
         GRIFFINDOR.setStudents(List.of(HARRY));
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/faculty"
-                                + "?id=" + GRIFFINDOR_ID))
+                                + "?id=" + GRIFFINDOR.getId()))
                 .andExpect(status().isOk())
-                .andExpect(content().json(objectMapper.writeValueAsString(GRIFFINDOR.getStudents())));
+                .andExpect(content().json(objectMapper.writeValueAsString(List.of(HARRY))));
     }
 
     @Test
     void edit_WithOnlyName_success() throws Exception {
-        when(facultyRepository.findById(any(Long.class)))
-                .thenReturn(Optional.of(GRIFFINDOR));
+        getGriffindor();
+
+        Faculty expected = new Faculty(SLYTHERIN_NAME, GRIFFINDOR_COLOR);
+        expected.setId(GRIFFINDOR.getId());
+
         when(facultyRepository.save(any(Faculty.class)))
-                .thenReturn(new Faculty(SLYTHERIN_NAME, GRIFFINDOR_COLOR));
+                .thenReturn(expected);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .put("/faculty/" + GRIFFINDOR_ID
+                        .put("/faculty/" + GRIFFINDOR.getId()
                                 + "?name=" + SLYTHERIN_NAME))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value(SLYTHERIN_NAME))
-                .andExpect(jsonPath("$.color").value(GRIFFINDOR_COLOR));
+                .andExpect(jsonPath("$.id").value(expected.getId()))
+                .andExpect(jsonPath("$.name").value(expected.getName()))
+                .andExpect(jsonPath("$.color").value(expected.getColor()));
     }
 
     @Test
     void edit_WithOnlyName_InvalideInputException() throws Exception {
-        when(facultyRepository.findById(any(Long.class)))
-                .thenReturn(Optional.of(GRIFFINDOR));
+        getGriffindor();
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .put("/faculty/" + GRIFFINDOR_ID
+                        .put("/faculty/" + GRIFFINDOR.getId()
                                 + "?name=" + INVALIDE_NAME_FACULTY))
                 .andExpect(status().isOk())
                 .andExpect(content().string(MESSAGE_INVALIDE_DATES));
@@ -258,26 +275,29 @@ class FacultyControllerTests {
 
     @Test
     void edit_WithOnlyColor_success() throws Exception {
-        when(facultyRepository.findById(any(Long.class)))
-                .thenReturn(Optional.of(GRIFFINDOR));
+        getGriffindor();
+
+        Faculty expected = new Faculty(GRIFFINDOR_NAME, SLYTHERIN_COLOR);
+        expected.setId(GRIFFINDOR.getId());
+
         when(facultyRepository.save(any(Faculty.class)))
-                .thenReturn(new Faculty(GRIFFINDOR_NAME, SLYTHERIN_COLOR));
+                .thenReturn(expected);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .put("/faculty/" + GRIFFINDOR_ID
+                        .put("/faculty/" + GRIFFINDOR.getId()
                                 + "?color=" + SLYTHERIN_COLOR))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value(GRIFFINDOR_NAME))
-                .andExpect(jsonPath("$.color").value(SLYTHERIN_COLOR));
+                .andExpect(jsonPath("$.id").value(expected.getId()))
+                .andExpect(jsonPath("$.name").value(expected.getName()))
+                .andExpect(jsonPath("$.color").value(expected.getColor()));
     }
 
     @Test
     void edit_WithOnlyColor_InvalideInputException() throws Exception {
-        when(facultyRepository.findById(any(Long.class)))
-                .thenReturn(Optional.of(GRIFFINDOR));
+        getGriffindor();
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .put("/faculty/" + GRIFFINDOR_ID
+                        .put("/faculty/" + GRIFFINDOR.getId()
                                 + "?color=" + INVALIDE_COLOR_FACULTY))
                 .andExpect(status().isOk())
                 .andExpect(content().string(MESSAGE_INVALIDE_DATES));
@@ -285,27 +305,30 @@ class FacultyControllerTests {
 
     @Test
     void edit_WithAllParameters_success() throws Exception {
-        when(facultyRepository.findById(any(Long.class)))
-                .thenReturn(Optional.of(GRIFFINDOR));
+        getGriffindor();
+
+        Faculty expected = new Faculty(SLYTHERIN_NAME, SLYTHERIN_COLOR);
+        expected.setId(GRIFFINDOR.getId());
+
         when(facultyRepository.save(any(Faculty.class)))
-                .thenReturn(new Faculty(SLYTHERIN_NAME, SLYTHERIN_COLOR));
+                .thenReturn(expected);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .put("/faculty/" + GRIFFINDOR_ID
+                        .put("/faculty/" + GRIFFINDOR.getId()
                                 + "?name=" + SLYTHERIN_NAME
                                 + "&color=" + SLYTHERIN_COLOR))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value(SLYTHERIN_NAME))
-                .andExpect(jsonPath("$.color").value(SLYTHERIN_COLOR));
+                .andExpect(jsonPath("$.id").value(expected.getId()))
+                .andExpect(jsonPath("$.name").value(expected.getName()))
+                .andExpect(jsonPath("$.color").value(expected.getColor()));
     }
 
     @Test
     void edit_WithAllParameters_InvalideInputException() throws Exception {
-        when(facultyRepository.findById(any(Long.class)))
-                .thenReturn(Optional.of(GRIFFINDOR));
+        getGriffindor();
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .put("/faculty/" + GRIFFINDOR_ID
+                        .put("/faculty/" + GRIFFINDOR.getId()
                                 + "?name=" + INVALIDE_NAME_FACULTY
                                 + "&color=" + INVALIDE_COLOR_FACULTY))
                 .andExpect(status().isOk())
@@ -314,25 +337,25 @@ class FacultyControllerTests {
 
     @Test
     void edit_WithoutParameters_success() throws Exception {
-        when(facultyRepository.findById(any(Long.class)))
-                .thenReturn(Optional.of(GRIFFINDOR));
+        getGriffindor();
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .put("/faculty/" + GRIFFINDOR_ID))
+                        .put("/faculty/" + GRIFFINDOR.getId()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value(GRIFFINDOR_NAME))
-                .andExpect(jsonPath("$.color").value(GRIFFINDOR_COLOR));
+                .andExpect(jsonPath("$.id").value(GRIFFINDOR.getId()))
+                .andExpect(jsonPath("$.name").value(GRIFFINDOR.getName()))
+                .andExpect(jsonPath("$.color").value(GRIFFINDOR.getColor()));
     }
 
     @Test
     void remove_success() throws Exception {
-        when(facultyRepository.findById(any(Long.class)))
-                .thenReturn(Optional.of(GRIFFINDOR));
+        getGriffindor();
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .delete("/faculty/" + GRIFFINDOR_ID))
+                        .delete("/faculty/" + GRIFFINDOR.getId()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value(GRIFFINDOR_NAME))
-                .andExpect(jsonPath("$.color").value(GRIFFINDOR_COLOR));
+                .andExpect(jsonPath("$.id").value(GRIFFINDOR.getId()))
+                .andExpect(jsonPath("$.name").value(GRIFFINDOR.getName()))
+                .andExpect(jsonPath("$.color").value(GRIFFINDOR.getColor()));
     }
 }

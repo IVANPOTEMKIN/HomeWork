@@ -14,11 +14,15 @@ public class Examples {
     public static final String HERMIONE_NAME = "Гермиона Грейнджер";
     public static final Integer HERMIONE_AGE = 12;
 
+    public static final String RONALD_NAME = "Рональд Уизли";
+    public static final Integer RONALD_AGE = 11;
+
     public static final String DRACO_NAME = "Драко Малфой";
     public static final Integer DRACO_AGE = 13;
 
     public static final Student HARRY = new Student(HARRY_NAME, HARRY_AGE, new Faculty());
     public static final Student HERMIONE = new Student(HERMIONE_NAME, HERMIONE_AGE, new Faculty());
+    public static final Student RONALD = new Student(RONALD_NAME, RONALD_AGE, new Faculty());
     public static final Student DRACO = new Student(DRACO_NAME, DRACO_AGE, new Faculty());
 
 
@@ -30,8 +34,12 @@ public class Examples {
     public static final String SLYTHERIN_NAME = "Слизерин";
     public static final String SLYTHERIN_COLOR = "Зеленый";
 
+    public static final String HUFFLEPUFF_NAME = "Пуффендуй";
+    public static final String HUFFLEPUFF_COLOR = "Желтый";
+
     public static final Faculty GRIFFINDOR = new Faculty(GRIFFINDOR_NAME, GRIFFINDOR_COLOR);
     public static final Faculty SLYTHERIN = new Faculty(SLYTHERIN_NAME, SLYTHERIN_COLOR);
+    public static final Faculty HUFFLEPUFF = new Faculty(HUFFLEPUFF_NAME, HUFFLEPUFF_COLOR);
 
 
     public static List<Student> getStudents() {
