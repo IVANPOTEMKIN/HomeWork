@@ -397,6 +397,71 @@ class StudentControllerTest {
     }
 
     @Test
+    void getByName_success() {
+        addGriffindor();
+        addHarry();
+
+        String actual = this.template.getForObject("http://localhost:" + port
+                        + "/student?name=" + HARRY_NAME,
+                String.class);
+
+        assertNotNull(actual);
+
+        assertTrue(actual.contains(HARRY.getId().toString()));
+        assertTrue(actual.contains(HARRY_NAME));
+        assertTrue(actual.contains(HARRY_AGE.toString()));
+        assertTrue(actual.contains(GRIFFINDOR.getId().toString()));
+        assertTrue(actual.contains(GRIFFINDOR_NAME));
+        assertTrue(actual.contains(GRIFFINDOR_COLOR));
+
+        deleteStudent(HARRY.getId());
+        deleteFaculty(GRIFFINDOR.getId());
+    }
+
+    @Test
+    void getByName_InvalideInputException() {
+        String actual = this.template.getForObject("http://localhost:" + port
+                        + "/student?name=" + INVALIDE_NAME_STUDENT,
+                String.class);
+
+        assertNotNull(actual);
+        assertEquals(MESSAGE_INVALIDE_DATES, actual);
+    }
+
+    @Test
+    void getByName_WithoutParameters_success() {
+        addGriffindor();
+        addSlytherin();
+        addHarry();
+        addDraco();
+
+        String actual = this.template.getForObject("http://localhost:" + port
+                        + "/student",
+                String.class);
+
+        assertNotNull(actual);
+
+        assertTrue(actual.contains(HARRY.getId().toString()));
+        assertTrue(actual.contains(HARRY_NAME));
+        assertTrue(actual.contains(HARRY_AGE.toString()));
+        assertTrue(actual.contains(GRIFFINDOR.getId().toString()));
+        assertTrue(actual.contains(GRIFFINDOR_NAME));
+        assertTrue(actual.contains(GRIFFINDOR_COLOR));
+
+        assertTrue(actual.contains(DRACO.getId().toString()));
+        assertTrue(actual.contains(DRACO_NAME));
+        assertTrue(actual.contains(DRACO_AGE.toString()));
+        assertTrue(actual.contains(SLYTHERIN.getId().toString()));
+        assertTrue(actual.contains(SLYTHERIN_NAME));
+        assertTrue(actual.contains(SLYTHERIN_COLOR));
+
+        deleteStudent(HARRY.getId());
+        deleteStudent(DRACO.getId());
+        deleteFaculty(GRIFFINDOR.getId());
+        deleteFaculty(SLYTHERIN.getId());
+    }
+
+    @Test
     void getAvgAgeStudents_success() {
         DecimalFormat numberFormat = new DecimalFormat("#.#");
 

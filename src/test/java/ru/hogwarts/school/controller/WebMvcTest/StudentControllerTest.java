@@ -23,6 +23,7 @@ import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -50,7 +51,7 @@ class StudentControllerTest {
     @InjectMocks
     private FacultyController controller;
 
-    ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     private void getGriffindor() {
         when(facultyRepository.findById(any(Long.class)))
@@ -261,6 +262,38 @@ class StudentControllerTest {
     @Test
     void getByAge_WithoutParameters_success() throws Exception {
         when(studentService.getByAge(null, null))
+                .thenReturn(getStudents());
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/student"))
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(getStudents())));
+    }
+
+    @Test
+    void getByName_success() throws Exception {
+        when(studentService.getByName(HARRY_NAME))
+                .thenReturn(List.of(HARRY));
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/student"
+                                + "?name=" + HARRY_NAME))
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(List.of(HARRY))));
+    }
+
+    @Test
+    void getByName_InvalideInputException() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/student"
+                                + "?id=" + INVALIDE_ID))
+                .andExpect(status().isOk())
+                .andExpect(content().string(MESSAGE_INVALIDE_DATES));
+    }
+
+    @Test
+    void getByName_WithoutParameters_success() throws Exception {
+        when(studentService.getByName(null))
                 .thenReturn(getStudents());
 
         mockMvc.perform(MockMvcRequestBuilders

@@ -56,6 +56,11 @@ public class StudentController {
         return service.getByAge(minAge, maxAge);
     }
 
+    @GetMapping(params = "name")
+    public Collection<Student> getByAge(@RequestParam(required = false) String name) {
+        return service.getByName(name);
+    }
+
     @GetMapping("/average-age-students")
     public String getAvgAgeStudents() {
         return service.getAvgAgeStudents();

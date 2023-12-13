@@ -126,6 +126,16 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    public Collection<Student> getByName(String name) {
+        if (name != null) {
+            checkService.validateCheck(name);
+            return repository.findByNameContainsIgnoreCase(name);
+        }
+
+        return getAll();
+    }
+
+    @Override
     public Faculty getFacultyById(Long id) {
         return get(id).getFaculty();
     }

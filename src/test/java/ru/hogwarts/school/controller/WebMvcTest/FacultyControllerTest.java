@@ -49,7 +49,7 @@ class FacultyControllerTest {
     @InjectMocks
     private FacultyController controller;
 
-    ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     private void addGriffindor() {
         when(facultyService.add(GRIFFINDOR_NAME, GRIFFINDOR_COLOR))

@@ -18,6 +18,8 @@ public interface StudentService {
 
     Collection<Student> getByAge(Integer minAge, Integer maxAge);
 
+    Collection<Student> getByName(String name);
+
     Faculty getFacultyById(Long id);
 
     Integer getAmountAllStudents();

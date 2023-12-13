@@ -413,6 +413,33 @@ class StudentServiceImplTest {
     }
 
     @Test
+    void getByName_success() {
+        when(repository.findByNameContainsIgnoreCase(any(String.class)))
+                .thenReturn(List.of(HARRY));
+
+        assertEquals(List.of(HARRY),
+                studentService.getByName(HARRY_NAME));
+    }
+
+    @Test
+    void getByName_InvalideInputException() {
+        when(repository.findByNameContainsIgnoreCase(any(String.class)))
+                .thenThrow(InvalideInputException.class);
+
+        assertThrows(InvalideInputException.class,
+                () -> studentService.getByName(INVALIDE_NAME_STUDENT));
+    }
+
+    @Test
+    void getByName_WithoutParameters_success() {
+        when(repository.findAll())
+                .thenReturn(getStudents());
+
+        assertEquals(getStudents(),
+                studentService.getByName(null));
+    }
+
+    @Test
     void getFacultyById_success() {
         getHarry();
 
