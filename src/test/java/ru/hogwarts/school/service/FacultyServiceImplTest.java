@@ -18,6 +18,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
 import static ru.hogwarts.school.utils.Examples.*;
@@ -57,7 +58,7 @@ class FacultyServiceImplTest {
 
     @Test
     void add_InvalideInputException() {
-        when(repository.save(any(Faculty.class)))
+        when(checkService.validateCheck(any(Faculty.class)))
                 .thenThrow(InvalideInputException.class);
 
         assertThrows(InvalideInputException.class,
@@ -68,7 +69,7 @@ class FacultyServiceImplTest {
 
     @Test
     void add_FacultyAlreadyAddedException() {
-        when(repository.save(any(Faculty.class)))
+        when(checkService.isFacultyAlreadyAdded(anyCollection(), any(Faculty.class)))
                 .thenThrow(FacultyAlreadyAddedException.class);
 
         assertThrows(FacultyAlreadyAddedException.class,
@@ -87,7 +88,7 @@ class FacultyServiceImplTest {
 
     @Test
     void get_InvalideInputException() {
-        when(repository.findById(any(Long.class)))
+        when(checkService.validateCheck(any(Long.class)))
                 .thenThrow(InvalideInputException.class);
 
         assertThrows(InvalideInputException.class,
@@ -219,7 +220,7 @@ class FacultyServiceImplTest {
 
     @Test
     void getByNameOrColor_WithOnlyName_InvalideInputException() {
-        when(repository.findByNameContainsIgnoreCase(any(String.class)))
+        when(checkService.validateCheck(any(String.class)))
                 .thenThrow(InvalideInputException.class);
 
         assertThrows(InvalideInputException.class,
@@ -241,7 +242,7 @@ class FacultyServiceImplTest {
 
     @Test
     void getByNameOrColor_WithOnlyColor_InvalideInputException() {
-        when(repository.findByColorContainsIgnoreCase(any(String.class)))
+        when(checkService.validateCheck(any(String.class)))
                 .thenThrow(InvalideInputException.class);
 
         assertThrows(InvalideInputException.class,
@@ -263,7 +264,7 @@ class FacultyServiceImplTest {
 
     @Test
     void getByNameOrColor_WithAllParameters_InvalideInputException() {
-        when(repository.findByNameContainsIgnoreCaseAndColorContainsIgnoreCase(any(String.class), any(String.class)))
+        when(checkService.validateCheck(any(String.class), any(String.class)))
                 .thenThrow(InvalideInputException.class);
 
         assertThrows(InvalideInputException.class,

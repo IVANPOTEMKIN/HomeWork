@@ -1,5 +1,6 @@
 package ru.hogwarts.school.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpStatusCodeException;
 import ru.hogwarts.school.model.Faculty;
@@ -12,11 +13,8 @@ import java.util.Collection;
 @RequestMapping("/faculty")
 public class FacultyController {
 
-    private final FacultyService service;
-
-    public FacultyController(FacultyService service) {
-        this.service = service;
-    }
+    @Autowired
+    private FacultyService service;
 
     @ExceptionHandler
     public String handleException(HttpStatusCodeException e) {

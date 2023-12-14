@@ -1,8 +1,10 @@
 package ru.hogwarts.school.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.multipart.MultipartFile;
 import ru.hogwarts.school.model.Avatar;
 import ru.hogwarts.school.service.AvatarService;
@@ -15,10 +17,12 @@ import java.util.Collection;
 @RequestMapping("/avatar")
 public class AvatarController {
 
-    private final AvatarService service;
+    @Autowired
+    private AvatarService service;
 
-    public AvatarController(AvatarService service) {
-        this.service = service;
+    @ExceptionHandler
+    public String handleException(HttpStatusCodeException e) {
+        return String.format("Code: %S. Error: %S", e.getStatusCode(), e.getStatusText());
     }
 
     @PostMapping(value = "/{studentId}/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

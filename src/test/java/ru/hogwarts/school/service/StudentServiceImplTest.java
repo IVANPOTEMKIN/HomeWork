@@ -19,6 +19,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
 import static ru.hogwarts.school.utils.Examples.*;
@@ -61,7 +62,7 @@ class StudentServiceImplTest {
 
     @Test
     void add_InvalideInputException() {
-        when(repository.save(any(Student.class)))
+        when(checkService.validateCheck(any(Student.class)))
                 .thenThrow(InvalideInputException.class);
 
         assertThrows(InvalideInputException.class,
@@ -73,7 +74,7 @@ class StudentServiceImplTest {
 
     @Test
     void add_StudentAlreadyAddedException() {
-        when(repository.save(any(Student.class)))
+        when(checkService.isStudentAlreadyAdded(anyCollection(), any(Student.class)))
                 .thenThrow(StudentAlreadyAddedException.class);
 
         assertThrows(StudentAlreadyAddedException.class,
@@ -93,7 +94,7 @@ class StudentServiceImplTest {
 
     @Test
     void get_InvalideInputException() {
-        when(repository.findById(any(Long.class)))
+        when(checkService.validateCheck(any(Long.class)))
                 .thenThrow(InvalideInputException.class);
 
         assertThrows(InvalideInputException.class,
@@ -350,7 +351,7 @@ class StudentServiceImplTest {
 
     @Test
     void getByAge_WithOnlyFirstParameter_InvalideInputException() {
-        when(repository.findByAge(any(Integer.class)))
+        when(checkService.validateCheck(any(Integer.class)))
                 .thenThrow(InvalideInputException.class);
 
         assertThrows(InvalideInputException.class,
@@ -372,7 +373,7 @@ class StudentServiceImplTest {
 
     @Test
     void getByAge_WithOnlySecondParameter_InvalideInputException() {
-        when(repository.findByAge(any(Integer.class)))
+        when(checkService.validateCheck(any(Integer.class)))
                 .thenThrow(InvalideInputException.class);
 
         assertThrows(InvalideInputException.class,
@@ -394,7 +395,7 @@ class StudentServiceImplTest {
 
     @Test
     void getByAge_WithAllParameters_InvalideInputException() {
-        when(repository.findByAgeBetween(any(Integer.class), any(Integer.class)))
+        when(checkService.validateCheck(any(Integer.class), any(Integer.class)))
                 .thenThrow(InvalideInputException.class);
 
         assertThrows(InvalideInputException.class,
@@ -423,7 +424,7 @@ class StudentServiceImplTest {
 
     @Test
     void getByName_InvalideInputException() {
-        when(repository.findByNameContainsIgnoreCase(any(String.class)))
+        when(checkService.validateCheck(any(String.class)))
                 .thenThrow(InvalideInputException.class);
 
         assertThrows(InvalideInputException.class,
