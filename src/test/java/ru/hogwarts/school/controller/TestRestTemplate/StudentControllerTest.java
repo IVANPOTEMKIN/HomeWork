@@ -89,28 +89,6 @@ class StudentControllerTest {
     }
 
     @Test
-    void add_StudentAlreadyAddedException() {
-        addGriffindor();
-        addHarry();
-
-        String expected = "Code: 400 BAD_REQUEST. Error: СТУДЕНТ УЖЕ ДОБАВЛЕН!";
-
-        String actual = this.template.postForObject("http://localhost:" + port
-                        + "/student"
-                        + "?name=" + HARRY_NAME
-                        + "&age=" + HARRY_AGE
-                        + "&facultyId=" + GRIFFINDOR.getId(),
-                HARRY,
-                String.class);
-
-        assertNotNull(actual);
-        assertEquals(expected, actual);
-
-        deleteStudent(HARRY.getId());
-        deleteFaculty(GRIFFINDOR.getId());
-    }
-
-    @Test
     void add_InvalideInputException() {
         String actual = this.template.postForObject("http://localhost:" + port
                         + "/student"
@@ -122,6 +100,26 @@ class StudentControllerTest {
 
         assertNotNull(actual);
         assertEquals(MESSAGE_INVALIDE_DATES, actual);
+    }
+
+    @Test
+    void add_StudentAlreadyAddedException() {
+        addGriffindor();
+        addHarry();
+
+        String actual = this.template.postForObject("http://localhost:" + port
+                        + "/student"
+                        + "?name=" + HARRY_NAME
+                        + "&age=" + HARRY_AGE
+                        + "&facultyId=" + GRIFFINDOR.getId(),
+                HARRY,
+                String.class);
+
+        assertNotNull(actual);
+        assertEquals(MESSAGE_STUDENT_ALREADY_ADDED, actual);
+
+        deleteStudent(HARRY.getId());
+        deleteFaculty(GRIFFINDOR.getId());
     }
 
     @Test
@@ -141,16 +139,6 @@ class StudentControllerTest {
     }
 
     @Test
-    void get_StudentNotFoundException() {
-        String actual = this.template.getForObject("http://localhost:" + port
-                        + "/student/" + HARRY_ID,
-                String.class);
-
-        assertNotNull(actual);
-        assertEquals(MESSAGE_STUDENT_NOT_FOUND, actual);
-    }
-
-    @Test
     void get_InvalideInputException() {
         String actual = this.template.getForObject("http://localhost:" + port
                         + "/student/" + INVALIDE_ID,
@@ -158,6 +146,16 @@ class StudentControllerTest {
 
         assertNotNull(actual);
         assertEquals(MESSAGE_INVALIDE_DATES, actual);
+    }
+
+    @Test
+    void get_StudentNotFoundException() {
+        String actual = this.template.getForObject("http://localhost:" + port
+                        + "/student/" + HARRY_ID,
+                String.class);
+
+        assertNotNull(actual);
+        assertEquals(MESSAGE_STUDENT_NOT_FOUND, actual);
     }
 
     @Test
@@ -174,18 +172,18 @@ class StudentControllerTest {
         assertNotNull(actual);
 
         assertTrue(actual.contains(HARRY.getId().toString()));
-        assertTrue(actual.contains(HARRY_NAME));
-        assertTrue(actual.contains(HARRY_AGE.toString()));
+        assertTrue(actual.contains(HARRY.getName()));
+        assertTrue(actual.contains(HARRY.getAge().toString()));
         assertTrue(actual.contains(GRIFFINDOR.getId().toString()));
-        assertTrue(actual.contains(GRIFFINDOR_NAME));
-        assertTrue(actual.contains(GRIFFINDOR_COLOR));
+        assertTrue(actual.contains(GRIFFINDOR.getName()));
+        assertTrue(actual.contains(GRIFFINDOR.getColor()));
 
         assertTrue(actual.contains(DRACO.getId().toString()));
-        assertTrue(actual.contains(DRACO_NAME));
-        assertTrue(actual.contains(DRACO_AGE.toString()));
+        assertTrue(actual.contains(DRACO.getName()));
+        assertTrue(actual.contains(DRACO.getAge().toString()));
         assertTrue(actual.contains(SLYTHERIN.getId().toString()));
-        assertTrue(actual.contains(SLYTHERIN_NAME));
-        assertTrue(actual.contains(SLYTHERIN_COLOR));
+        assertTrue(actual.contains(SLYTHERIN.getName()));
+        assertTrue(actual.contains(SLYTHERIN.getColor()));
 
         deleteStudent(HARRY.getId());
         deleteStudent(DRACO.getId());
@@ -207,18 +205,18 @@ class StudentControllerTest {
         assertNotNull(actual);
 
         assertTrue(actual.contains(HARRY.getId().toString()));
-        assertTrue(actual.contains(HARRY_NAME));
-        assertTrue(actual.contains(HARRY_AGE.toString()));
+        assertTrue(actual.contains(HARRY.getName()));
+        assertTrue(actual.contains(HARRY.getAge().toString()));
         assertTrue(actual.contains(GRIFFINDOR.getId().toString()));
-        assertTrue(actual.contains(GRIFFINDOR_NAME));
-        assertTrue(actual.contains(GRIFFINDOR_COLOR));
+        assertTrue(actual.contains(GRIFFINDOR.getName()));
+        assertTrue(actual.contains(GRIFFINDOR.getColor()));
 
         assertTrue(actual.contains(DRACO.getId().toString()));
-        assertTrue(actual.contains(DRACO_NAME));
-        assertTrue(actual.contains(DRACO_AGE.toString()));
+        assertTrue(actual.contains(DRACO.getName()));
+        assertTrue(actual.contains(DRACO.getAge().toString()));
         assertTrue(actual.contains(SLYTHERIN.getId().toString()));
-        assertTrue(actual.contains(SLYTHERIN_NAME));
-        assertTrue(actual.contains(SLYTHERIN_COLOR));
+        assertTrue(actual.contains(SLYTHERIN.getName()));
+        assertTrue(actual.contains(SLYTHERIN.getColor()));
 
         deleteStudent(HARRY.getId());
         deleteStudent(DRACO.getId());
@@ -261,11 +259,11 @@ class StudentControllerTest {
         assertNotNull(actual);
 
         assertTrue(actual.contains(HARRY.getId().toString()));
-        assertTrue(actual.contains(HARRY_NAME));
-        assertTrue(actual.contains(HARRY_AGE.toString()));
+        assertTrue(actual.contains(HARRY.getName()));
+        assertTrue(actual.contains(HARRY.getAge().toString()));
         assertTrue(actual.contains(GRIFFINDOR.getId().toString()));
-        assertTrue(actual.contains(GRIFFINDOR_NAME));
-        assertTrue(actual.contains(GRIFFINDOR_COLOR));
+        assertTrue(actual.contains(GRIFFINDOR.getName()));
+        assertTrue(actual.contains(GRIFFINDOR.getColor()));
 
         deleteStudent(HARRY.getId());
         deleteFaculty(GRIFFINDOR.getId());
@@ -284,25 +282,25 @@ class StudentControllerTest {
 
     @Test
     void getByAge_WithOnlySecondParameter_success() {
-        addGriffindor();
-        addHarry();
+        addSlytherin();
+        addDraco();
 
         String actual = this.template.getForObject("http://localhost:" + port
                         + "/student"
-                        + "?maxAge=" + HARRY_AGE,
+                        + "?maxAge=" + DRACO_AGE,
                 String.class);
 
         assertNotNull(actual);
 
-        assertTrue(actual.contains(HARRY.getId().toString()));
-        assertTrue(actual.contains(HARRY_NAME));
-        assertTrue(actual.contains(HARRY_AGE.toString()));
-        assertTrue(actual.contains(GRIFFINDOR.getId().toString()));
-        assertTrue(actual.contains(GRIFFINDOR_NAME));
-        assertTrue(actual.contains(GRIFFINDOR_COLOR));
+        assertTrue(actual.contains(DRACO.getId().toString()));
+        assertTrue(actual.contains(DRACO.getName()));
+        assertTrue(actual.contains(DRACO.getAge().toString()));
+        assertTrue(actual.contains(SLYTHERIN.getId().toString()));
+        assertTrue(actual.contains(SLYTHERIN.getName()));
+        assertTrue(actual.contains(SLYTHERIN.getColor()));
 
-        deleteStudent(HARRY.getId());
-        deleteFaculty(GRIFFINDOR.getId());
+        deleteStudent(DRACO.getId());
+        deleteFaculty(SLYTHERIN.getId());
     }
 
     @Test
@@ -332,18 +330,18 @@ class StudentControllerTest {
         assertNotNull(actual);
 
         assertTrue(actual.contains(HARRY.getId().toString()));
-        assertTrue(actual.contains(HARRY_NAME));
-        assertTrue(actual.contains(HARRY_AGE.toString()));
+        assertTrue(actual.contains(HARRY.getName()));
+        assertTrue(actual.contains(HARRY.getAge().toString()));
         assertTrue(actual.contains(GRIFFINDOR.getId().toString()));
-        assertTrue(actual.contains(GRIFFINDOR_NAME));
-        assertTrue(actual.contains(GRIFFINDOR_COLOR));
+        assertTrue(actual.contains(GRIFFINDOR.getName()));
+        assertTrue(actual.contains(GRIFFINDOR.getColor()));
 
         assertTrue(actual.contains(DRACO.getId().toString()));
-        assertTrue(actual.contains(DRACO_NAME));
-        assertTrue(actual.contains(DRACO_AGE.toString()));
+        assertTrue(actual.contains(DRACO.getName()));
+        assertTrue(actual.contains(DRACO.getAge().toString()));
         assertTrue(actual.contains(SLYTHERIN.getId().toString()));
-        assertTrue(actual.contains(SLYTHERIN_NAME));
-        assertTrue(actual.contains(SLYTHERIN_COLOR));
+        assertTrue(actual.contains(SLYTHERIN.getName()));
+        assertTrue(actual.contains(SLYTHERIN.getColor()));
 
         deleteStudent(HARRY.getId());
         deleteStudent(DRACO.getId());
@@ -377,18 +375,18 @@ class StudentControllerTest {
         assertNotNull(actual);
 
         assertTrue(actual.contains(HARRY.getId().toString()));
-        assertTrue(actual.contains(HARRY_NAME));
-        assertTrue(actual.contains(HARRY_AGE.toString()));
+        assertTrue(actual.contains(HARRY.getName()));
+        assertTrue(actual.contains(HARRY.getAge().toString()));
         assertTrue(actual.contains(GRIFFINDOR.getId().toString()));
-        assertTrue(actual.contains(GRIFFINDOR_NAME));
-        assertTrue(actual.contains(GRIFFINDOR_COLOR));
+        assertTrue(actual.contains(GRIFFINDOR.getName()));
+        assertTrue(actual.contains(GRIFFINDOR.getColor()));
 
         assertTrue(actual.contains(DRACO.getId().toString()));
-        assertTrue(actual.contains(DRACO_NAME));
-        assertTrue(actual.contains(DRACO_AGE.toString()));
+        assertTrue(actual.contains(DRACO.getName()));
+        assertTrue(actual.contains(DRACO.getAge().toString()));
         assertTrue(actual.contains(SLYTHERIN.getId().toString()));
-        assertTrue(actual.contains(SLYTHERIN_NAME));
-        assertTrue(actual.contains(SLYTHERIN_COLOR));
+        assertTrue(actual.contains(SLYTHERIN.getName()));
+        assertTrue(actual.contains(SLYTHERIN.getColor()));
 
         deleteStudent(HARRY.getId());
         deleteStudent(DRACO.getId());
@@ -408,11 +406,11 @@ class StudentControllerTest {
         assertNotNull(actual);
 
         assertTrue(actual.contains(HARRY.getId().toString()));
-        assertTrue(actual.contains(HARRY_NAME));
-        assertTrue(actual.contains(HARRY_AGE.toString()));
+        assertTrue(actual.contains(HARRY.getName()));
+        assertTrue(actual.contains(HARRY.getAge().toString()));
         assertTrue(actual.contains(GRIFFINDOR.getId().toString()));
-        assertTrue(actual.contains(GRIFFINDOR_NAME));
-        assertTrue(actual.contains(GRIFFINDOR_COLOR));
+        assertTrue(actual.contains(GRIFFINDOR.getName()));
+        assertTrue(actual.contains(GRIFFINDOR.getColor()));
 
         deleteStudent(HARRY.getId());
         deleteFaculty(GRIFFINDOR.getId());
@@ -442,18 +440,18 @@ class StudentControllerTest {
         assertNotNull(actual);
 
         assertTrue(actual.contains(HARRY.getId().toString()));
-        assertTrue(actual.contains(HARRY_NAME));
-        assertTrue(actual.contains(HARRY_AGE.toString()));
+        assertTrue(actual.contains(HARRY.getName()));
+        assertTrue(actual.contains(HARRY.getAge().toString()));
         assertTrue(actual.contains(GRIFFINDOR.getId().toString()));
-        assertTrue(actual.contains(GRIFFINDOR_NAME));
-        assertTrue(actual.contains(GRIFFINDOR_COLOR));
+        assertTrue(actual.contains(GRIFFINDOR.getName()));
+        assertTrue(actual.contains(GRIFFINDOR.getColor()));
 
         assertTrue(actual.contains(DRACO.getId().toString()));
-        assertTrue(actual.contains(DRACO_NAME));
-        assertTrue(actual.contains(DRACO_AGE.toString()));
+        assertTrue(actual.contains(DRACO.getName()));
+        assertTrue(actual.contains(DRACO.getAge().toString()));
         assertTrue(actual.contains(SLYTHERIN.getId().toString()));
-        assertTrue(actual.contains(SLYTHERIN_NAME));
-        assertTrue(actual.contains(SLYTHERIN_COLOR));
+        assertTrue(actual.contains(SLYTHERIN.getName()));
+        assertTrue(actual.contains(SLYTHERIN.getColor()));
 
         deleteStudent(HARRY.getId());
         deleteStudent(DRACO.getId());
@@ -543,6 +541,25 @@ class StudentControllerTest {
     }
 
     @Test
+    void edit_WithOnlyName_StudentAlreadyAddedException() {
+        addGriffindor();
+        addHarry();
+
+        String actual = this.template.exchange("http://localhost:" + port
+                        + "/student/" + HARRY.getId()
+                        + "?name=" + HARRY_NAME,
+                HttpMethod.PUT,
+                HttpEntity.EMPTY,
+                String.class).getBody();
+
+        assertNotNull(actual);
+        assertEquals(MESSAGE_STUDENT_ALREADY_ADDED, actual);
+
+        deleteStudent(HARRY.getId());
+        deleteFaculty(GRIFFINDOR.getId());
+    }
+
+    @Test
     void edit_WithOnlyNameAndAge_success() {
         addGriffindor();
         addHarry();
@@ -586,11 +603,30 @@ class StudentControllerTest {
     }
 
     @Test
+    void edit_WithOnlyNameAndAge_StudentAlreadyAddedException() {
+        addGriffindor();
+        addHarry();
+
+        String actual = this.template.exchange("http://localhost:" + port
+                        + "/student/" + HARRY.getId()
+                        + "?name=" + HARRY_NAME
+                        + "&age=" + HARRY_AGE,
+                HttpMethod.PUT,
+                HttpEntity.EMPTY,
+                String.class).getBody();
+
+        assertNotNull(actual);
+        assertEquals(MESSAGE_STUDENT_ALREADY_ADDED, actual);
+
+        deleteStudent(HARRY.getId());
+        deleteFaculty(GRIFFINDOR.getId());
+    }
+
+    @Test
     void edit_WithOnlyNameAndFacultyId_success() {
         addGriffindor();
         addSlytherin();
         addHarry();
-        addDraco();
 
         Student expected = new Student(DRACO_NAME, HARRY_AGE, SLYTHERIN);
         expected.setId(HARRY.getId());
@@ -607,7 +643,6 @@ class StudentControllerTest {
         assertEquals(expected, actual);
 
         deleteStudent(HARRY.getId());
-        deleteStudent(DRACO.getId());
         deleteFaculty(GRIFFINDOR.getId());
         deleteFaculty(SLYTHERIN.getId());
     }
@@ -627,6 +662,26 @@ class StudentControllerTest {
 
         assertNotNull(actual);
         assertEquals(MESSAGE_INVALIDE_DATES, actual);
+
+        deleteStudent(HARRY.getId());
+        deleteFaculty(GRIFFINDOR.getId());
+    }
+
+    @Test
+    void edit_WithOnlyNameAndFacultyId_StudentAlreadyAddedException() {
+        addGriffindor();
+        addHarry();
+
+        String actual = this.template.exchange("http://localhost:" + port
+                        + "/student/" + HARRY.getId()
+                        + "?name=" + HARRY_NAME
+                        + "&facultyId=" + GRIFFINDOR.getId(),
+                HttpMethod.PUT,
+                HttpEntity.EMPTY,
+                String.class).getBody();
+
+        assertNotNull(actual);
+        assertEquals(MESSAGE_STUDENT_ALREADY_ADDED, actual);
 
         deleteStudent(HARRY.getId());
         deleteFaculty(GRIFFINDOR.getId());
@@ -674,11 +729,29 @@ class StudentControllerTest {
     }
 
     @Test
+    void edit_WithOnlyAge_StudentAlreadyAddedException() {
+        addGriffindor();
+        addHarry();
+
+        String actual = this.template.exchange("http://localhost:" + port
+                        + "/student/" + HARRY.getId()
+                        + "?age=" + HARRY_AGE,
+                HttpMethod.PUT,
+                HttpEntity.EMPTY,
+                String.class).getBody();
+
+        assertNotNull(actual);
+        assertEquals(MESSAGE_STUDENT_ALREADY_ADDED, actual);
+
+        deleteStudent(HARRY.getId());
+        deleteFaculty(GRIFFINDOR.getId());
+    }
+
+    @Test
     void edit_WithOnlyAgeAndFacultyId_success() {
         addGriffindor();
         addSlytherin();
         addHarry();
-        addDraco();
 
         Student expected = new Student(HARRY_NAME, DRACO_AGE, SLYTHERIN);
         expected.setId(HARRY.getId());
@@ -695,7 +768,6 @@ class StudentControllerTest {
         assertEquals(expected, actual);
 
         deleteStudent(HARRY.getId());
-        deleteStudent(DRACO.getId());
         deleteFaculty(GRIFFINDOR.getId());
         deleteFaculty(SLYTHERIN.getId());
     }
@@ -721,11 +793,30 @@ class StudentControllerTest {
     }
 
     @Test
+    void edit_WithOnlyAgeAndFacultyId_StudentAlreadyAddedException() {
+        addGriffindor();
+        addHarry();
+
+        String actual = this.template.exchange("http://localhost:" + port
+                        + "/student/" + HARRY.getId()
+                        + "?age=" + HARRY_AGE
+                        + "&facultyId=" + GRIFFINDOR.getId(),
+                HttpMethod.PUT,
+                HttpEntity.EMPTY,
+                String.class).getBody();
+
+        assertNotNull(actual);
+        assertEquals(MESSAGE_STUDENT_ALREADY_ADDED, actual);
+
+        deleteStudent(HARRY.getId());
+        deleteFaculty(GRIFFINDOR.getId());
+    }
+
+    @Test
     void edit_WithOnlyFacultyId_success() {
         addGriffindor();
         addSlytherin();
         addHarry();
-        addDraco();
 
         Student expected = new Student(HARRY_NAME, HARRY_AGE, SLYTHERIN);
         expected.setId(HARRY.getId());
@@ -741,28 +832,8 @@ class StudentControllerTest {
         assertEquals(expected, actual);
 
         deleteStudent(HARRY.getId());
-        deleteStudent(DRACO.getId());
         deleteFaculty(GRIFFINDOR.getId());
         deleteFaculty(SLYTHERIN.getId());
-    }
-
-    @Test
-    void edit_WithOnlyFacultyId_InvalideInputException() {
-        addGriffindor();
-        addHarry();
-
-        String actual = this.template.exchange("http://localhost:" + port
-                        + "/student/" + HARRY.getId()
-                        + "?facultyId=" + INVALIDE_ID,
-                HttpMethod.PUT,
-                HttpEntity.EMPTY,
-                String.class).getBody();
-
-        assertNotNull(actual);
-        assertEquals(MESSAGE_INVALIDE_DATES, actual);
-
-        deleteStudent(HARRY.getId());
-        deleteFaculty(GRIFFINDOR.getId());
     }
 
     @Test
@@ -770,7 +841,6 @@ class StudentControllerTest {
         addGriffindor();
         addSlytherin();
         addHarry();
-        addDraco();
 
         Student expected = new Student(DRACO_NAME, DRACO_AGE, SLYTHERIN);
         expected.setId(HARRY.getId());
@@ -788,7 +858,6 @@ class StudentControllerTest {
         assertEquals(expected, actual);
 
         deleteStudent(HARRY.getId());
-        deleteStudent(DRACO.getId());
         deleteFaculty(GRIFFINDOR.getId());
         deleteFaculty(SLYTHERIN.getId());
     }
@@ -809,6 +878,27 @@ class StudentControllerTest {
 
         assertNotNull(actual);
         assertEquals(MESSAGE_INVALIDE_DATES, actual);
+
+        deleteStudent(HARRY.getId());
+        deleteFaculty(GRIFFINDOR.getId());
+    }
+
+    @Test
+    void edit_WithAllParameters_StudentAlreadyAddedException() {
+        addGriffindor();
+        addHarry();
+
+        String actual = this.template.exchange("http://localhost:" + port
+                        + "/student/" + HARRY.getId()
+                        + "?name=" + HARRY_NAME
+                        + "&age=" + HARRY_AGE
+                        + "&facultyId=" + GRIFFINDOR.getId(),
+                HttpMethod.PUT,
+                HttpEntity.EMPTY,
+                String.class).getBody();
+
+        assertNotNull(actual);
+        assertEquals(MESSAGE_STUDENT_ALREADY_ADDED, actual);
 
         deleteStudent(HARRY.getId());
         deleteFaculty(GRIFFINDOR.getId());

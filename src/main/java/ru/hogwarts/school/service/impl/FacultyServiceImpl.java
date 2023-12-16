@@ -1,5 +1,7 @@
 package ru.hogwarts.school.service.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.exception.FacultyNotFoundException;
@@ -15,79 +17,115 @@ import java.util.Collection;
 public class FacultyServiceImpl implements FacultyService {
 
     private final FacultyRepository repository;
-    private final CheckService service;
+    private final CheckService checkService;
+    private final Logger logger = LoggerFactory.getLogger(FacultyServiceImpl.class);
 
     @Autowired
-    public FacultyServiceImpl(FacultyRepository repository, CheckService service) {
+    public FacultyServiceImpl(FacultyRepository repository, CheckService checkService) {
         this.repository = repository;
-        this.service = service;
+        this.checkService = checkService;
     }
 
     @Override
     public Faculty add(String name, String color) {
+        logger.info("Вызван метод \"add({}, {})\" сервиса \"Faculty\"", name, color);
+
         Faculty newFaculty = new Faculty(name, color);
 
-        service.validateCheck(newFaculty);
-        service.isFacultyAlreadyAdded(getAll(), newFaculty);
+        checkService.validateCheck(newFaculty);
+        checkService.isFacultyAlreadyAdded(getAll(), newFaculty);
 
         return repository.save(newFaculty);
     }
 
     @Override
     public Faculty get(Long id) {
-        service.validateCheck(id);
+        logger.info("Вызван метод \"get({})\" сервиса \"Faculty\"", id);
+
+        checkService.validateCheck(id);
         return repository.findById(id).orElseThrow(FacultyNotFoundException::new);
     }
 
     @Override
     public Faculty edit(Long id, String name, String color) {
-        Faculty updateFaculty = get(id);
+        logger.info("Вызван метод \"edit({}, {}, {})\" сервиса \"Faculty\"", id, name, color);
+
+        Faculty faculty = get(id);
 
         if (name != null & color == null) {
-            updateFaculty.setName(name);
-            return repository.save(updateFaculty);
+            Faculty newFaculty = new Faculty(name, faculty.getColor());
+            newFaculty.setId(faculty.getId());
+
+            checkService.validateCheck(newFaculty);
+            checkService.isFacultyAlreadyAdded(getAll(), newFaculty);
+
+            logger.info("Название факультета УСПЕШНО ИЗМЕНЕНО на \"{}\"", name);
+            return repository.save(newFaculty);
         }
 
         if (name == null & color != null) {
-            updateFaculty.setColor(color);
-            return repository.save(updateFaculty);
+            Faculty newFaculty = new Faculty(faculty.getName(), color);
+            newFaculty.setId(faculty.getId());
+
+            checkService.validateCheck(newFaculty);
+            checkService.isFacultyAlreadyAdded(getAll(), newFaculty);
+
+            logger.info("Цвет факультета УСПЕШНО ИЗМЕНЕН на \"{}\"", color);
+            return repository.save(newFaculty);
         }
 
-        if (name == null & color == null) {
-            return updateFaculty;
+        if (name != null & color != null) {
+            Faculty newFaculty = new Faculty(name, color);
+            newFaculty.setId(faculty.getId());
+
+            checkService.validateCheck(newFaculty);
+            checkService.isFacultyAlreadyAdded(getAll(), newFaculty);
+
+            logger.info("Название и цвет факультета УСПЕШНО ИЗМЕНЕНЫ на \"{}, {}\"", name, color);
+            return repository.save(newFaculty);
         }
 
-        updateFaculty.setName(name);
-        updateFaculty.setColor(color);
-        return repository.save(updateFaculty);
+        logger.info("Изменения НЕ БЫЛИ ВНЕСЕНЫ");
+        return faculty;
     }
 
     @Override
     public Faculty remove(Long id) {
+        logger.info("Вызван метод \"remove({})\" сервиса \"Faculty\"", id);
+
         Faculty deleteFaculty = get(id);
         repository.delete(deleteFaculty);
+
+        logger.info("Факультет \"{}\" УСПЕШНО УДАЛЕН", id);
         return deleteFaculty;
     }
 
     @Override
     public Collection<Faculty> getAll() {
+        logger.info("Вызван метод \"getAll()\" сервиса \"Faculty\"");
+        logger.info("Список всех факультетов УСПЕШНО ПОЛУЧЕН");
         return repository.findAll();
     }
 
     @Override
     public Collection<Faculty> getByNameOrColor(String name, String color) {
+        logger.info("Вызван метод \"getByNameOrColor({}, {})\" сервиса \"Faculty\"", name, color);
+
         if (name != null & color == null) {
-            service.validateCheck(name);
+            checkService.validateCheck(name);
+            logger.info("Факультет с названием \"{}\" УСПЕШНО ПОЛУЧЕН", name);
             return repository.findByNameContainsIgnoreCase(name);
         }
 
         if (name == null & color != null) {
-            service.validateCheck(color);
+            checkService.validateCheck(color);
+            logger.info("Факультет с цветом \"{}\" УСПЕШНО ПОЛУЧЕН", color);
             return repository.findByColorContainsIgnoreCase(color);
         }
 
         if (name != null & color != null) {
-            service.validateCheck(name, color);
+            checkService.validateCheck(name, color);
+            logger.info("Факультет с названием и цветом \"{}, {}\" УСПЕШНО ПОЛУЧЕН", name, color);
             return repository.findByNameContainsIgnoreCaseAndColorContainsIgnoreCase(name, color);
         }
 
@@ -96,11 +134,15 @@ public class FacultyServiceImpl implements FacultyService {
 
     @Override
     public Collection<Student> getStudentsByFacultyId(Long id) {
+        logger.info("Вызван метод \"getStudentsByFacultyId({})\" сервиса \"Faculty\"", id);
+        logger.info("Список всех студентов факультета \"{}\" УСПЕШНО ПОЛУЧЕН", id);
         return get(id).getStudents();
     }
 
     @Override
     public Integer getAmountAllFaculties() {
+        logger.info("Вызван метод \"getAmountAllFaculties()\" сервиса \"Faculty\"");
+        logger.info("Количество факультетов УСПЕШНО ПОЛУЧЕНО");
         return repository.getAmountAllFaculties();
     }
 }

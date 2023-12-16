@@ -23,8 +23,8 @@ import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.hogwarts.school.utils.Examples.*;
@@ -54,35 +54,25 @@ class StudentControllerTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     private void getGriffindor() {
-        when(facultyRepository.findById(any(Long.class)))
+        when(facultyRepository.findById(anyLong()))
                 .thenReturn(Optional.of(GRIFFINDOR));
         GRIFFINDOR.setId(GRIFFINDOR_ID);
     }
 
     private void getSlytherin() {
-        when(facultyRepository.findById(any(Long.class)))
+        when(facultyRepository.findById(anyLong()))
                 .thenReturn(Optional.of(SLYTHERIN));
         SLYTHERIN.setId(SLYTHERIN_ID);
-    }
-
-    private void addHarry() {
-        when(studentService.add(HARRY_NAME, HARRY_AGE, GRIFFINDOR.getId()))
-                .thenReturn(HARRY);
-        HARRY.setId(HARRY_ID);
-        HARRY.setFaculty(GRIFFINDOR);
-    }
-
-    private void getHarry() {
-        when(studentRepository.findById(any(Long.class)))
-                .thenReturn(Optional.of(HARRY));
-        HARRY.setId(HARRY_ID);
-        HARRY.setFaculty(GRIFFINDOR);
     }
 
     @Test
     void add_success() throws Exception {
         getGriffindor();
-        addHarry();
+
+        when(studentService.add(HARRY_NAME, HARRY_AGE, GRIFFINDOR.getId()))
+                .thenReturn(HARRY);
+
+        HARRY.setFaculty(GRIFFINDOR);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/student"
@@ -113,12 +103,8 @@ class StudentControllerTest {
     @Test
     void add_StudentAlreadyAddedException() throws Exception {
         getGriffindor();
-        addHarry();
-
-        when(studentService.getAll())
-                .thenReturn(getStudents());
-
-        String expected = "Code: 400 BAD_REQUEST. Error: СТУДЕНТ УЖЕ ДОБАВЛЕН!";
+        add_success();
+        getAll_success();
 
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/student"
@@ -126,13 +112,18 @@ class StudentControllerTest {
                                 + "&age=" + HARRY.getAge()
                                 + "&facultyId=" + GRIFFINDOR.getId()))
                 .andExpect(status().isOk())
-                .andExpect(content().string(expected));
+                .andExpect(content().string(MESSAGE_STUDENT_ALREADY_ADDED));
     }
 
     @Test
     void get_success() throws Exception {
         getGriffindor();
-        getHarry();
+
+        when(studentRepository.findById(anyLong()))
+                .thenReturn(Optional.of(HARRY));
+
+        HARRY.setId(HARRY_ID);
+        HARRY.setFaculty(GRIFFINDOR);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/student/" + HARRY.getId()))
@@ -286,7 +277,7 @@ class StudentControllerTest {
     void getByName_InvalideInputException() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/student"
-                                + "?id=" + INVALIDE_ID))
+                                + "?name=" + INVALIDE_NAME_STUDENT))
                 .andExpect(status().isOk())
                 .andExpect(content().string(MESSAGE_INVALIDE_DATES));
     }
@@ -318,7 +309,7 @@ class StudentControllerTest {
     @Test
     void getFaculty_success() throws Exception {
         getGriffindor();
-        getHarry();
+        get_success();
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/student"
@@ -330,8 +321,7 @@ class StudentControllerTest {
     @Test
     void edit_WithOnlyName_success() throws Exception {
         getGriffindor();
-        getSlytherin();
-        getHarry();
+        get_success();
 
         Student expected = new Student(DRACO_NAME, HARRY_AGE, GRIFFINDOR);
         expected.setId(HARRY.getId());
@@ -353,7 +343,7 @@ class StudentControllerTest {
 
     @Test
     void edit_WithOnlyName_InvalideInputException() throws Exception {
-        getHarry();
+        get_success();
 
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/student/" + HARRY.getId()
@@ -363,10 +353,21 @@ class StudentControllerTest {
     }
 
     @Test
+    void edit_WithOnlyName_StudentAlreadyAddedException() throws Exception {
+        get_success();
+        getAll_success();
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .put("/student/" + HARRY.getId()
+                                + "?name=" + HARRY_NAME))
+                .andExpect(status().isOk())
+                .andExpect(content().string(MESSAGE_STUDENT_ALREADY_ADDED));
+    }
+
+    @Test
     void edit_WithOnlyNameAndAge_success() throws Exception {
         getGriffindor();
-        getSlytherin();
-        getHarry();
+        get_success();
 
         Student expected = new Student(DRACO_NAME, DRACO_AGE, GRIFFINDOR);
         expected.setId(HARRY.getId());
@@ -389,7 +390,7 @@ class StudentControllerTest {
 
     @Test
     void edit_WithOnlyNameAndAge_InvalideInputException() throws Exception {
-        getHarry();
+        get_success();
 
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/student/" + HARRY.getId()
@@ -400,10 +401,23 @@ class StudentControllerTest {
     }
 
     @Test
+    void edit_WithOnlyNameAndAge_StudentAlreadyAddedException() throws Exception {
+        get_success();
+        getAll_success();
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .put("/student/" + HARRY.getId()
+                                + "?name=" + HARRY_NAME
+                                + "&age=" + HARRY_AGE))
+                .andExpect(status().isOk())
+                .andExpect(content().string(MESSAGE_STUDENT_ALREADY_ADDED));
+    }
+
+    @Test
     void edit_WithOnlyNameAndFacultyId_success() throws Exception {
         getGriffindor();
         getSlytherin();
-        getHarry();
+        get_success();
 
         Student expected = new Student(DRACO_NAME, HARRY_AGE, SLYTHERIN);
         expected.setId(HARRY.getId());
@@ -414,7 +428,7 @@ class StudentControllerTest {
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/student/" + HARRY.getId()
                                 + "?name=" + DRACO_NAME
-                                + "&facultyId=" + SLYTHERIN_ID))
+                                + "&facultyId=" + SLYTHERIN.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(expected.getId()))
                 .andExpect(jsonPath("$.name").value(expected.getName()))
@@ -426,7 +440,7 @@ class StudentControllerTest {
 
     @Test
     void edit_WithOnlyNameAndFacultyId_InvalideInputException() throws Exception {
-        getHarry();
+        get_success();
 
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/student/" + HARRY.getId()
@@ -437,10 +451,23 @@ class StudentControllerTest {
     }
 
     @Test
+    void edit_WithOnlyNameAndFacultyId_StudentAlreadyAddedException() throws Exception {
+        getGriffindor();
+        get_success();
+        getAll_success();
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .put("/student/" + HARRY.getId()
+                                + "?name=" + HARRY_NAME
+                                + "&facultyId=" + GRIFFINDOR.getId()))
+                .andExpect(status().isOk())
+                .andExpect(content().string(MESSAGE_STUDENT_ALREADY_ADDED));
+    }
+
+    @Test
     void edit_WithOnlyAge_success() throws Exception {
         getGriffindor();
-        getSlytherin();
-        getHarry();
+        get_success();
 
         Student expected = new Student(HARRY_NAME, DRACO_AGE, GRIFFINDOR);
         expected.setId(HARRY.getId());
@@ -462,7 +489,7 @@ class StudentControllerTest {
 
     @Test
     void edit_WithOnlyAge_InvalideInputException() throws Exception {
-        getHarry();
+        get_success();
 
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/student/" + HARRY.getId()
@@ -472,10 +499,22 @@ class StudentControllerTest {
     }
 
     @Test
+    void edit_WithOnlyAge_StudentAlreadyAddedException() throws Exception {
+        get_success();
+        getAll_success();
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .put("/student/" + HARRY.getId()
+                                + "?age=" + HARRY_AGE))
+                .andExpect(status().isOk())
+                .andExpect(content().string(MESSAGE_STUDENT_ALREADY_ADDED));
+    }
+
+    @Test
     void edit_WithOnlyAgeAndFacultyId_success() throws Exception {
         getGriffindor();
         getSlytherin();
-        getHarry();
+        get_success();
 
         Student expected = new Student(HARRY_NAME, DRACO_AGE, SLYTHERIN);
         expected.setId(HARRY.getId());
@@ -486,7 +525,7 @@ class StudentControllerTest {
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/student/" + HARRY.getId()
                                 + "?age=" + DRACO_AGE
-                                + "&facultyId=" + SLYTHERIN_ID))
+                                + "&facultyId=" + SLYTHERIN.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(expected.getId()))
                 .andExpect(jsonPath("$.name").value(expected.getName()))
@@ -498,7 +537,7 @@ class StudentControllerTest {
 
     @Test
     void edit_WithOnlyAgeAndFacultyId_InvalideInputException() throws Exception {
-        getHarry();
+        get_success();
 
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/student/" + HARRY.getId()
@@ -509,10 +548,24 @@ class StudentControllerTest {
     }
 
     @Test
+    void edit_WithOnlyAgeAndFacultyId_StudentAlreadyAddedException() throws Exception {
+        getGriffindor();
+        get_success();
+        getAll_success();
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .put("/student/" + HARRY.getId()
+                                + "?age=" + HARRY_AGE
+                                + "&facultyId=" + GRIFFINDOR.getId()))
+                .andExpect(status().isOk())
+                .andExpect(content().string(MESSAGE_STUDENT_ALREADY_ADDED));
+    }
+
+    @Test
     void edit_WithOnlyFacultyId_success() throws Exception {
         getGriffindor();
         getSlytherin();
-        getHarry();
+        get_success();
 
         Student expected = new Student(HARRY_NAME, HARRY_AGE, SLYTHERIN);
         expected.setId(HARRY.getId());
@@ -522,7 +575,7 @@ class StudentControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/student/" + HARRY.getId()
-                                + "?facultyId=" + SLYTHERIN_ID))
+                                + "?facultyId=" + SLYTHERIN.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(expected.getId()))
                 .andExpect(jsonPath("$.name").value(expected.getName()))
@@ -533,21 +586,10 @@ class StudentControllerTest {
     }
 
     @Test
-    void edit_WithOnlyFacultyId_InvalideInputException() throws Exception {
-        getHarry();
-
-        mockMvc.perform(MockMvcRequestBuilders
-                        .put("/student/" + HARRY.getId()
-                                + "?facultyId=" + INVALIDE_ID))
-                .andExpect(status().isOk())
-                .andExpect(content().string(MESSAGE_INVALIDE_DATES));
-    }
-
-    @Test
     void edit_WithAllParameters_success() throws Exception {
         getGriffindor();
         getSlytherin();
-        getHarry();
+        get_success();
 
         Student expected = new Student(DRACO_NAME, DRACO_AGE, SLYTHERIN);
         expected.setId(HARRY.getId());
@@ -559,7 +601,7 @@ class StudentControllerTest {
                         .put("/student/" + HARRY.getId()
                                 + "?name=" + DRACO_NAME
                                 + "&age=" + DRACO_AGE
-                                + "&facultyId=" + SLYTHERIN_ID))
+                                + "&facultyId=" + SLYTHERIN.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(expected.getId()))
                 .andExpect(jsonPath("$.name").value(expected.getName()))
@@ -571,7 +613,7 @@ class StudentControllerTest {
 
     @Test
     void edit_WithAllParameters_InvalideInputException() throws Exception {
-        getHarry();
+        get_success();
 
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/student/" + HARRY.getId()
@@ -583,9 +625,24 @@ class StudentControllerTest {
     }
 
     @Test
+    void edit_WithAllParameters_StudentAlreadyAddedException() throws Exception {
+        getGriffindor();
+        get_success();
+        getAll_success();
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .put("/student/" + HARRY.getId()
+                                + "?name=" + HARRY_NAME
+                                + "&age=" + HARRY_AGE
+                                + "&facultyId=" + GRIFFINDOR.getId()))
+                .andExpect(status().isOk())
+                .andExpect(content().string(MESSAGE_STUDENT_ALREADY_ADDED));
+    }
+
+    @Test
     void edit_WithoutParameters_success() throws Exception {
         getGriffindor();
-        getHarry();
+        get_success();
 
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/student/" + HARRY.getId()))
@@ -601,7 +658,7 @@ class StudentControllerTest {
     @Test
     void remove_success() throws Exception {
         getGriffindor();
-        getHarry();
+        get_success();
 
         mockMvc.perform(MockMvcRequestBuilders
                         .delete("/student/" + HARRY.getId()))

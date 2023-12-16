@@ -1,5 +1,7 @@
 package ru.hogwarts.school.service.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.exception.FacultyAlreadyAddedException;
 import ru.hogwarts.school.exception.InvalideInputException;
@@ -12,6 +14,9 @@ import java.util.Collection;
 
 @Service
 public class CheckServiceImpl implements CheckService {
+
+    private final Logger logger = LoggerFactory.getLogger(CheckServiceImpl.class);
+
     @Override
     public boolean validateCheck(Student student) {
         if (student == null
@@ -34,16 +39,20 @@ public class CheckServiceImpl implements CheckService {
     @Override
     public boolean validateCheck(Long value) {
         if (value == null || value <= 0) {
+            logger.warn("Значение \"{}\" - НЕКОРРЕКТНО", value);
             throw new InvalideInputException();
         }
+        logger.info("Значение \"{}\" - КОРРЕКТНО", value);
         return false;
     }
 
     @Override
     public boolean validateCheck(Integer value) {
         if (value == null || value <= 0) {
+            logger.warn("Значение \"{}\" - НЕКОРРЕКТНО", value);
             throw new InvalideInputException();
         }
+        logger.info("Значение \"{}\" - КОРРЕКТНО", value);
         return false;
     }
 
@@ -62,8 +71,10 @@ public class CheckServiceImpl implements CheckService {
         if (str == null
                 || str.isBlank()
                 || !str.matches("[а-яА-Я -]+")) {
+            logger.warn("Значение \"{}\" - НЕКОРРЕКТНО", str);
             throw new InvalideInputException();
         }
+        logger.info("Значение \"{}\" - КОРРЕКТНО", str);
         return false;
     }
 
@@ -82,9 +93,11 @@ public class CheckServiceImpl implements CheckService {
         for (Student element : students) {
             if (element.getName().equalsIgnoreCase(student.getName())
                     && element.getAge().equals(student.getAge())) {
+                logger.warn("Студент \"{}\" УЖЕ БЫЛ ДОБАВЛЕН", student.getName());
                 throw new StudentAlreadyAddedException();
             }
         }
+        logger.info("Студент \"{}\" УСПЕШНО ДОБАВЛЕН", student.getName());
         return false;
     }
 
@@ -93,9 +106,11 @@ public class CheckServiceImpl implements CheckService {
         for (Faculty element : faculties) {
             if (element.getName().equalsIgnoreCase(faculty.getName())
                     && element.getColor().equalsIgnoreCase(faculty.getColor())) {
+                logger.warn("Факультет \"{}\" УЖЕ БЫЛ ДОБАВЛЕН", faculty.getName());
                 throw new FacultyAlreadyAddedException();
             }
         }
+        logger.info("Факультет \"{}\" УСПЕШНО ДОБАВЛЕН", faculty.getName());
         return false;
     }
 }

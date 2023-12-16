@@ -1,13 +1,10 @@
 package ru.hogwarts.school.model;
 
-import ru.hogwarts.school.exception.InvalideInputException;
-
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
 public class Student {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,11 +28,7 @@ public class Student {
     }
 
     public void setId(Long id) {
-        if (id != null && id > 0) {
-            this.id = id;
-            return;
-        }
-        throw new InvalideInputException();
+        this.id = id;
     }
 
     public String getName() {
@@ -43,13 +36,7 @@ public class Student {
     }
 
     public void setName(String name) {
-        if (name != null
-                && !name.isBlank()
-                && name.matches("[а-яА-Я -]+")) {
-            this.name = name;
-            return;
-        }
-        throw new InvalideInputException();
+        this.name = name;
     }
 
     public Integer getAge() {
@@ -57,11 +44,7 @@ public class Student {
     }
 
     public void setAge(Integer age) {
-        if (age != null && age > 0) {
-            this.age = age;
-            return;
-        }
-        throw new InvalideInputException();
+        this.age = age;
     }
 
     public Faculty getFaculty() {

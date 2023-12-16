@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.hogwarts.school.utils.Examples.*;
@@ -51,21 +52,11 @@ class FacultyControllerTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private void addGriffindor() {
+    @Test
+    void add_success() throws Exception {
         when(facultyService.add(GRIFFINDOR_NAME, GRIFFINDOR_COLOR))
                 .thenReturn(GRIFFINDOR);
         GRIFFINDOR.setId(GRIFFINDOR_ID);
-    }
-
-    private void getGriffindor() {
-        when(facultyRepository.findById(any(Long.class)))
-                .thenReturn(Optional.of(GRIFFINDOR));
-        GRIFFINDOR.setId(GRIFFINDOR_ID);
-    }
-
-    @Test
-    void add_success() throws Exception {
-        addGriffindor();
 
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/faculty"
@@ -89,24 +80,22 @@ class FacultyControllerTest {
 
     @Test
     void add_FacultyAlreadyAddedException() throws Exception {
-        addGriffindor();
-
-        when(facultyService.getAll())
-                .thenReturn(getFaculties());
-
-        String expected = "Code: 400 BAD_REQUEST. Error: ФАКУЛЬТЕТ УЖЕ ДОБАВЛЕН!";
+        add_success();
+        getAll_success();
 
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/faculty"
                                 + "?name=" + GRIFFINDOR.getName()
                                 + "&color=" + GRIFFINDOR.getColor()))
                 .andExpect(status().isOk())
-                .andExpect(content().string(expected));
+                .andExpect(content().string(MESSAGE_FACULTY_ALREADY_ADDED));
     }
 
     @Test
     void get_success() throws Exception {
-        getGriffindor();
+        when(facultyRepository.findById(anyLong()))
+                .thenReturn(Optional.of(GRIFFINDOR));
+        GRIFFINDOR.setId(GRIFFINDOR_ID);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/faculty/" + GRIFFINDOR.getId()))
@@ -232,7 +221,7 @@ class FacultyControllerTest {
 
     @Test
     void getStudentsByFacultyId_success() throws Exception {
-        getGriffindor();
+        get_success();
 
         GRIFFINDOR.setStudents(List.of(HARRY));
 
@@ -245,7 +234,7 @@ class FacultyControllerTest {
 
     @Test
     void edit_WithOnlyName_success() throws Exception {
-        getGriffindor();
+        get_success();
 
         Faculty expected = new Faculty(SLYTHERIN_NAME, GRIFFINDOR_COLOR);
         expected.setId(GRIFFINDOR.getId());
@@ -264,7 +253,7 @@ class FacultyControllerTest {
 
     @Test
     void edit_WithOnlyName_InvalideInputException() throws Exception {
-        getGriffindor();
+        get_success();
 
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/faculty/" + GRIFFINDOR.getId()
@@ -274,8 +263,20 @@ class FacultyControllerTest {
     }
 
     @Test
+    void edit_WithOnlyName_FacultyAlreadyAddedException() throws Exception {
+        get_success();
+        getAll_success();
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .put("/faculty/" + GRIFFINDOR.getId()
+                                + "?name=" + GRIFFINDOR.getName()))
+                .andExpect(status().isOk())
+                .andExpect(content().string(MESSAGE_FACULTY_ALREADY_ADDED));
+    }
+
+    @Test
     void edit_WithOnlyColor_success() throws Exception {
-        getGriffindor();
+        get_success();
 
         Faculty expected = new Faculty(GRIFFINDOR_NAME, SLYTHERIN_COLOR);
         expected.setId(GRIFFINDOR.getId());
@@ -294,7 +295,7 @@ class FacultyControllerTest {
 
     @Test
     void edit_WithOnlyColor_InvalideInputException() throws Exception {
-        getGriffindor();
+        get_success();
 
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/faculty/" + GRIFFINDOR.getId()
@@ -304,8 +305,20 @@ class FacultyControllerTest {
     }
 
     @Test
+    void edit_WithOnlyColor_FacultyAlreadyAddedException() throws Exception {
+        get_success();
+        getAll_success();
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .put("/faculty/" + GRIFFINDOR.getId()
+                                + "?color=" + GRIFFINDOR.getColor()))
+                .andExpect(status().isOk())
+                .andExpect(content().string(MESSAGE_FACULTY_ALREADY_ADDED));
+    }
+
+    @Test
     void edit_WithAllParameters_success() throws Exception {
-        getGriffindor();
+        get_success();
 
         Faculty expected = new Faculty(SLYTHERIN_NAME, SLYTHERIN_COLOR);
         expected.setId(GRIFFINDOR.getId());
@@ -325,7 +338,7 @@ class FacultyControllerTest {
 
     @Test
     void edit_WithAllParameters_InvalideInputException() throws Exception {
-        getGriffindor();
+        get_success();
 
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/faculty/" + GRIFFINDOR.getId()
@@ -336,8 +349,21 @@ class FacultyControllerTest {
     }
 
     @Test
+    void edit_WithAllParameters_FacultyAlreadyAddedException() throws Exception {
+        get_success();
+        getAll_success();
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .put("/faculty/" + GRIFFINDOR.getId()
+                                + "?name=" + GRIFFINDOR.getName()
+                                + "&color=" + GRIFFINDOR.getColor()))
+                .andExpect(status().isOk())
+                .andExpect(content().string(MESSAGE_FACULTY_ALREADY_ADDED));
+    }
+
+    @Test
     void edit_WithoutParameters_success() throws Exception {
-        getGriffindor();
+        get_success();
 
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/faculty/" + GRIFFINDOR.getId()))
@@ -349,7 +375,7 @@ class FacultyControllerTest {
 
     @Test
     void remove_success() throws Exception {
-        getGriffindor();
+        get_success();
 
         mockMvc.perform(MockMvcRequestBuilders
                         .delete("/faculty/" + GRIFFINDOR.getId()))

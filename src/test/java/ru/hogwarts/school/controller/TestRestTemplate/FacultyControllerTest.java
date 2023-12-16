@@ -75,25 +75,6 @@ class FacultyControllerTest {
     }
 
     @Test
-    void add_FacultyAlreadyAddedException() {
-        addGriffindor();
-
-        String expected = "Code: 400 BAD_REQUEST. Error: ФАКУЛЬТЕТ УЖЕ ДОБАВЛЕН!";
-
-        String actual = this.template.postForObject("http://localhost:" + port
-                        + "/faculty"
-                        + "?name=" + GRIFFINDOR_NAME
-                        + "&color=" + GRIFFINDOR_COLOR,
-                GRIFFINDOR,
-                String.class);
-
-        assertNotNull(actual);
-        assertEquals(expected, actual);
-
-        deleteFaculty(GRIFFINDOR.getId());
-    }
-
-    @Test
     void add_InvalideInputException() {
         String actual = this.template.postForObject("http://localhost:" + port
                         + "/faculty"
@@ -104,6 +85,23 @@ class FacultyControllerTest {
 
         assertNotNull(actual);
         assertEquals(MESSAGE_INVALIDE_DATES, actual);
+    }
+
+    @Test
+    void add_FacultyAlreadyAddedException() {
+        addGriffindor();
+
+        String actual = this.template.postForObject("http://localhost:" + port
+                        + "/faculty"
+                        + "?name=" + GRIFFINDOR_NAME
+                        + "&color=" + GRIFFINDOR_COLOR,
+                GRIFFINDOR,
+                String.class);
+
+        assertNotNull(actual);
+        assertEquals(MESSAGE_FACULTY_ALREADY_ADDED, actual);
+
+        deleteFaculty(GRIFFINDOR.getId());
     }
 
     @Test
@@ -121,16 +119,6 @@ class FacultyControllerTest {
     }
 
     @Test
-    void get_FacultyNotFoundException() {
-        String actual = this.template.getForObject("http://localhost:" + port
-                        + "/faculty/" + GRIFFINDOR_ID,
-                String.class);
-
-        assertNotNull(actual);
-        assertEquals(MESSAGE_FACULTY_NOT_FOUND, actual);
-    }
-
-    @Test
     void get_InvalideInputException() {
         String actual = this.template.getForObject("http://localhost:" + port
                         + "/faculty/" + INVALIDE_ID,
@@ -138,6 +126,16 @@ class FacultyControllerTest {
 
         assertNotNull(actual);
         assertEquals(MESSAGE_INVALIDE_DATES, actual);
+    }
+
+    @Test
+    void get_FacultyNotFoundException() {
+        String actual = this.template.getForObject("http://localhost:" + port
+                        + "/faculty/" + GRIFFINDOR_ID,
+                String.class);
+
+        assertNotNull(actual);
+        assertEquals(MESSAGE_FACULTY_NOT_FOUND, actual);
     }
 
     @Test
@@ -152,12 +150,12 @@ class FacultyControllerTest {
         assertNotNull(actual);
 
         assertTrue(actual.contains(GRIFFINDOR.getId().toString()));
-        assertTrue(actual.contains(GRIFFINDOR_NAME));
-        assertTrue(actual.contains(GRIFFINDOR_COLOR));
+        assertTrue(actual.contains(GRIFFINDOR.getName()));
+        assertTrue(actual.contains(GRIFFINDOR.getColor()));
 
         assertTrue(actual.contains(SLYTHERIN.getId().toString()));
-        assertTrue(actual.contains(SLYTHERIN_NAME));
-        assertTrue(actual.contains(SLYTHERIN_COLOR));
+        assertTrue(actual.contains(SLYTHERIN.getName()));
+        assertTrue(actual.contains(SLYTHERIN.getColor()));
 
         deleteFaculty(GRIFFINDOR.getId());
         deleteFaculty(SLYTHERIN.getId());
@@ -193,8 +191,8 @@ class FacultyControllerTest {
         assertNotNull(actual);
 
         assertTrue(actual.contains(GRIFFINDOR.getId().toString()));
-        assertTrue(actual.contains(GRIFFINDOR_NAME));
-        assertTrue(actual.contains(GRIFFINDOR_COLOR));
+        assertTrue(actual.contains(GRIFFINDOR.getName()));
+        assertTrue(actual.contains(GRIFFINDOR.getColor()));
 
         deleteFaculty(GRIFFINDOR.getId());
     }
@@ -222,8 +220,8 @@ class FacultyControllerTest {
         assertNotNull(actual);
 
         assertTrue(actual.contains(GRIFFINDOR.getId().toString()));
-        assertTrue(actual.contains(GRIFFINDOR_NAME));
-        assertTrue(actual.contains(GRIFFINDOR_COLOR));
+        assertTrue(actual.contains(GRIFFINDOR.getName()));
+        assertTrue(actual.contains(GRIFFINDOR.getColor()));
 
         deleteFaculty(GRIFFINDOR.getId());
     }
@@ -252,8 +250,8 @@ class FacultyControllerTest {
         assertNotNull(actual);
 
         assertTrue(actual.contains(GRIFFINDOR.getId().toString()));
-        assertTrue(actual.contains(GRIFFINDOR_NAME));
-        assertTrue(actual.contains(GRIFFINDOR_COLOR));
+        assertTrue(actual.contains(GRIFFINDOR.getName()));
+        assertTrue(actual.contains(GRIFFINDOR.getColor()));
 
         deleteFaculty(GRIFFINDOR.getId());
     }
@@ -305,12 +303,12 @@ class FacultyControllerTest {
         assertNotNull(actual);
 
         assertTrue(actual.contains(HARRY.getId().toString()));
-        assertTrue(actual.contains(HARRY_NAME));
-        assertTrue(actual.contains(HARRY_AGE.toString()));
+        assertTrue(actual.contains(HARRY.getName()));
+        assertTrue(actual.contains(HARRY.getAge().toString()));
 
         assertTrue(actual.contains(GRIFFINDOR.getId().toString()));
-        assertTrue(actual.contains(GRIFFINDOR_NAME));
-        assertTrue(actual.contains(GRIFFINDOR_COLOR));
+        assertTrue(actual.contains(GRIFFINDOR.getName()));
+        assertTrue(actual.contains(GRIFFINDOR.getColor()));
 
         deleteStudent(HARRY.getId());
         deleteFaculty(GRIFFINDOR.getId());
@@ -354,6 +352,23 @@ class FacultyControllerTest {
     }
 
     @Test
+    void edit_WithOnlyName_FacultyAlreadyAddedException() {
+        addGriffindor();
+
+        String actual = this.template.exchange("http://localhost:" + port
+                        + "/faculty/" + GRIFFINDOR.getId()
+                        + "?name=" + GRIFFINDOR_NAME,
+                HttpMethod.PUT,
+                HttpEntity.EMPTY,
+                String.class).getBody();
+
+        assertNotNull(actual);
+        assertEquals(MESSAGE_FACULTY_ALREADY_ADDED, actual);
+
+        deleteFaculty(GRIFFINDOR.getId());
+    }
+
+    @Test
     void edit_WithOnlyColor_success() {
         addGriffindor();
 
@@ -386,6 +401,23 @@ class FacultyControllerTest {
 
         assertNotNull(actual);
         assertEquals(MESSAGE_INVALIDE_DATES, actual);
+
+        deleteFaculty(GRIFFINDOR.getId());
+    }
+
+    @Test
+    void edit_WithOnlyColor_FacultyAlreadyAddedException() {
+        addGriffindor();
+
+        String actual = this.template.exchange("http://localhost:" + port
+                        + "/faculty/" + GRIFFINDOR.getId()
+                        + "?color=" + GRIFFINDOR_COLOR,
+                HttpMethod.PUT,
+                HttpEntity.EMPTY,
+                String.class).getBody();
+
+        assertNotNull(actual);
+        assertEquals(MESSAGE_FACULTY_ALREADY_ADDED, actual);
 
         deleteFaculty(GRIFFINDOR.getId());
     }
@@ -425,6 +457,24 @@ class FacultyControllerTest {
 
         assertNotNull(actual);
         assertEquals(MESSAGE_INVALIDE_DATES, actual);
+
+        deleteFaculty(GRIFFINDOR.getId());
+    }
+
+    @Test
+    void edit_WithAllParameters_FacultyAlreadyAddedException() {
+        addGriffindor();
+
+        String actual = this.template.exchange("http://localhost:" + port
+                        + "/faculty/" + GRIFFINDOR.getId()
+                        + "?name=" + GRIFFINDOR_NAME
+                        + "&color=" + GRIFFINDOR_COLOR,
+                HttpMethod.PUT,
+                HttpEntity.EMPTY,
+                String.class).getBody();
+
+        assertNotNull(actual);
+        assertEquals(MESSAGE_FACULTY_ALREADY_ADDED, actual);
 
         deleteFaculty(GRIFFINDOR.getId());
     }

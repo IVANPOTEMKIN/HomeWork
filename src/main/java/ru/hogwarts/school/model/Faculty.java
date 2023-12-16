@@ -1,7 +1,6 @@
 package ru.hogwarts.school.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import ru.hogwarts.school.exception.InvalideInputException;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -9,7 +8,6 @@ import java.util.Objects;
 
 @Entity
 public class Faculty {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -32,11 +30,7 @@ public class Faculty {
     }
 
     public void setId(Long id) {
-        if (id != null && id > 0) {
-            this.id = id;
-            return;
-        }
-        throw new InvalideInputException();
+        this.id = id;
     }
 
     public String getName() {
@@ -44,14 +38,7 @@ public class Faculty {
     }
 
     public void setName(String name) {
-        if (name != null
-                && !name.isBlank()
-                && name.matches("[а-яА-Я -]+")
-                && !name.equalsIgnoreCase(getColor())) {
-            this.name = name;
-            return;
-        }
-        throw new InvalideInputException();
+        this.name = name;
     }
 
     public String getColor() {
@@ -59,14 +46,7 @@ public class Faculty {
     }
 
     public void setColor(String color) {
-        if (color != null
-                && !color.isBlank()
-                && color.matches("[а-яА-Я -]+")
-                && !color.equalsIgnoreCase(getName())) {
-            this.color = color;
-            return;
-        }
-        throw new InvalideInputException();
+        this.color = color;
     }
 
     public Collection<Student> getStudents() {
