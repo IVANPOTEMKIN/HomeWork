@@ -12,6 +12,7 @@ import ru.hogwarts.school.service.CheckService;
 import ru.hogwarts.school.service.FacultyService;
 
 import java.util.Collection;
+import java.util.Comparator;
 
 @Service
 public class FacultyServiceImpl implements FacultyService {
@@ -144,5 +145,17 @@ public class FacultyServiceImpl implements FacultyService {
         logger.info("Вызван метод \"getAmountAllFaculties()\" сервиса \"Faculty\"");
         logger.info("Количество факультетов УСПЕШНО ПОЛУЧЕНО");
         return repository.getAmountAllFaculties();
+    }
+
+    @Override
+    public String getLongestName() {
+        logger.info("Вызван метод \"getLongestName()\" сервиса \"Faculty\"");
+        logger.info("Самое длинное название факультета УСПЕШНО ПОЛУЧЕНО");
+
+        return getAll().stream()
+                .map(Faculty::getName)
+                .map(String::toUpperCase)
+                .max(Comparator.comparing(String::length))
+                .orElseThrow(FacultyNotFoundException::new);
     }
 }

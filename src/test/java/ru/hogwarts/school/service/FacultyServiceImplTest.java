@@ -537,4 +537,14 @@ class FacultyServiceImplTest {
 
         verify(repository, times(1)).getAmountAllFaculties();
     }
+
+    @Test
+    void getLongestName_success() {
+        getAll_success();
+
+        assertEquals(GRIFFINDOR_NAME.toUpperCase(),
+                facultyService.getLongestName());
+
+        verify(repository, times(2)).findAll();
+    }
 }

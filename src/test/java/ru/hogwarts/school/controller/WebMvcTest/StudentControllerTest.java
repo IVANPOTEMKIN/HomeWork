@@ -308,6 +308,16 @@ class StudentControllerTest {
     }
 
     @Test
+    void getAvgAgeAllStudents_success() throws Exception {
+        getAll_success();
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/student/average-age-all-students"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(Double.toString(AVG_AGE_STUDENTS)));
+    }
+
+    @Test
     void getBySortedName_WithPrefix_success() throws Exception {
         getAll_success();
 

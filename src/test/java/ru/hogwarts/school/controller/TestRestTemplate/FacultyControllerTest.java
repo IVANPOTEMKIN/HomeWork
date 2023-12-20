@@ -292,6 +292,22 @@ class FacultyControllerTest {
     }
 
     @Test
+    void getLongestName_success() {
+        addGriffindor();
+        addSlytherin();
+
+        String actual = this.template.getForObject("http://localhost:" + port
+                        + "/faculty/longest-name",
+                String.class);
+
+        assertNotNull(actual);
+        assertTrue(actual.contains(GRIFFINDOR.getName().toUpperCase()));
+
+        deleteFaculty(GRIFFINDOR.getId());
+        deleteFaculty(SLYTHERIN.getId());
+    }
+
+    @Test
     void getStudents_success() {
         addGriffindor();
         addHarry();

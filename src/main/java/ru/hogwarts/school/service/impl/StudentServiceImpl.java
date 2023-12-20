@@ -188,7 +188,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Collection<Student> getByName(String name) {
-        logger.info("Вызван метод \"getByName\" сервиса \"Student\"");
+        logger.info("Вызван метод \"getByName(\"{}\")\" сервиса \"Student\"", name);
 
         if (name != null) {
             checkService.validateCheck(name);
@@ -201,21 +201,21 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Faculty getFacultyById(Long id) {
-        logger.info("Вызван метод \"getFacultyById\" сервиса \"Student\"");
+        logger.info("Вызван метод \"getFacultyById(\"{}\")\" сервиса \"Student\"", id);
         logger.info("Факультет студента \"{}\" УСПЕШНО ПОЛУЧЕН", id);
         return get(id).getFaculty();
     }
 
     @Override
     public Integer getAmountAllStudents() {
-        logger.info("Вызван метод \"getAmountAllStudents\" сервиса \"Student\"");
+        logger.info("Вызван метод \"getAmountAllStudents()\" сервиса \"Student\"");
         logger.info("Количество студентов УСПЕШНО ПОЛУЧЕНО");
         return repository.getAmountAllStudents();
     }
 
     @Override
     public String getAvgAgeStudents() {
-        logger.info("Вызван метод \"getAvgAgeStudents\" сервиса \"Student\"");
+        logger.info("Вызван метод \"getAvgAgeStudents()\" сервиса \"Student\"");
         logger.info("Средний возраст студентов УСПЕШНО ПОЛУЧЕН");
         DecimalFormat numberFormat = new DecimalFormat("#.#");
         return numberFormat.format(repository.getAvgAgeStudents());
@@ -223,15 +223,19 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Collection<Student> getLastFiveStudents() {
-        logger.info("Вызван метод \"getLastFiveStudents\" сервиса \"Student\"");
+        logger.info("Вызван метод \"getLastFiveStudents()\" сервиса \"Student\"");
         logger.info("Список последних 5 студентов УСПЕШНО ПОЛУЧЕН");
         return repository.getLastFiveStudents();
     }
 
     @Override
     public Collection<String> getBySortedName(String prefix) {
+        logger.info("Вызван метод \"getBySortedName(\"{}\")\" сервиса \"Student\"", prefix);
+
         if (prefix != null) {
             checkService.validateCheck(prefix);
+
+            logger.info("Список имен студентов с префиксом \"{}\" 5 студентов УСПЕШНО ПОЛУЧЕН", prefix);
             return getAll().stream()
                     .map(Student::getName)
                     .map(String::toUpperCase)
@@ -240,10 +244,22 @@ public class StudentServiceImpl implements StudentService {
                     .collect(Collectors.toUnmodifiableList());
         }
 
+        logger.info("Список имен всех студентов УСПЕШНО ПОЛУЧЕН");
         return getAll().stream()
                 .map(Student::getName)
                 .map(String::toUpperCase)
                 .sorted()
                 .collect(Collectors.toUnmodifiableList());
+    }
+
+    @Override
+    public Double getAvgAgeAllStudents() {
+        logger.info("Вызван метод \"getAvgAgeAllStudents()\" сервиса \"Student\"");
+        logger.info("Средний возраст студентов УСПЕШНО ПОЛУЧЕН");
+
+        return getAll().stream()
+                .mapToDouble(Student::getAge)
+                .average()
+                .orElse(0D);
     }
 }

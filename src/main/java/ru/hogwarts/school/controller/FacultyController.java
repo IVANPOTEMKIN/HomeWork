@@ -48,6 +48,11 @@ public class FacultyController {
         return service.getByNameOrColor(name, color);
     }
 
+    @GetMapping("/longest-name")
+    public String getLongestName() {
+        return service.getLongestName();
+    }
+
     @GetMapping(params = "id")
     public Collection<Student> getStudents(@RequestParam(required = false) Long id) {
         return service.getStudentsByFacultyId(id);

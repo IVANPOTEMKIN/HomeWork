@@ -957,4 +957,14 @@ class StudentServiceImplTest {
         verify(repository, times(2)).findAll();
         verify(checkService, times(0)).validateCheck(anyString());
     }
+
+    @Test
+    void getAvgAgeAllStudents_success() {
+        getAll_success();
+
+        assertEquals(AVG_AGE_STUDENTS,
+                studentService.getAvgAgeAllStudents());
+
+        verify(repository, times(2)).findAll();
+    }
 }

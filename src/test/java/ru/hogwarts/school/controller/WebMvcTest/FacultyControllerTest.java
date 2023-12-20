@@ -220,7 +220,17 @@ class FacultyControllerTest {
     }
 
     @Test
-    void getStudentsByFacultyId_success() throws Exception {
+    void getLongestName_success() throws Exception {
+        getAll_success();
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/faculty/longest-name"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(GRIFFINDOR_NAME.toUpperCase()));
+    }
+
+    @Test
+    void getStudents_success() throws Exception {
         get_success();
 
         GRIFFINDOR.setStudents(List.of(HARRY));

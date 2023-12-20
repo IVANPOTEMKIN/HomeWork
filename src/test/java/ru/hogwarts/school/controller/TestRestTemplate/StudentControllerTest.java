@@ -484,6 +484,28 @@ class StudentControllerTest {
     }
 
     @Test
+    void getAvgAgeAllStudents_success() {
+        addGriffindor();
+        addSlytherin();
+        addHarry();
+        addDraco();
+
+        Double expected = (double) (HARRY_AGE + DRACO_AGE) / List.of(HARRY, DRACO).size();
+
+        Double actual = this.template.getForObject("http://localhost:" + port
+                        + "/student/average-age-all-students",
+                Double.class);
+
+        assertNotNull(actual);
+        assertEquals(expected, actual);
+
+        deleteStudent(HARRY.getId());
+        deleteStudent(DRACO.getId());
+        deleteFaculty(GRIFFINDOR.getId());
+        deleteFaculty(SLYTHERIN.getId());
+    }
+
+    @Test
     void getBySortedName_WithPrefix_success() {
         addGriffindor();
         addSlytherin();
