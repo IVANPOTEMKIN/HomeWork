@@ -68,4 +68,7 @@ public class Examples {
     public static final Integer AMOUNT_FACULTIES = 4;
     public static final Integer AMOUNT_STUDENTS = 15;
     public static final Double AVG_AGE_STUDENTS = 13.3;
+
+    public static final String PREFIX = "г";
+    public static final String INVALIDE_PREFIX = "г_1";
 }

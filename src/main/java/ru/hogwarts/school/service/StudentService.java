@@ -27,4 +27,6 @@ public interface StudentService {
     String getAvgAgeStudents();
 
     Collection<Student> getLastFiveStudents();
+
+    Collection<String> getBySortedName(String prefix);
 }

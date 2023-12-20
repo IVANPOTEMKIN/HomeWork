@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import ru.hogwarts.school.exception.StudentNotFoundException;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
@@ -14,6 +15,7 @@ import ru.hogwarts.school.service.StudentService;
 
 import java.text.DecimalFormat;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 @Service
 public class StudentServiceImpl implements StudentService {
@@ -224,5 +226,24 @@ public class StudentServiceImpl implements StudentService {
         logger.info("Вызван метод \"getLastFiveStudents\" сервиса \"Student\"");
         logger.info("Список последних 5 студентов УСПЕШНО ПОЛУЧЕН");
         return repository.getLastFiveStudents();
+    }
+
+    @Override
+    public Collection<String> getBySortedName(String prefix) {
+        if (prefix != null) {
+            checkService.validateCheck(prefix);
+            return getAll().stream()
+                    .map(Student::getName)
+                    .map(String::toUpperCase)
+                    .filter(s -> StringUtils.startsWithIgnoreCase(s, prefix))
+                    .sorted()
+                    .collect(Collectors.toUnmodifiableList());
+        }
+
+        return getAll().stream()
+                .map(Student::getName)
+                .map(String::toUpperCase)
+                .sorted()
+                .collect(Collectors.toUnmodifiableList());
     }
 }

@@ -64,6 +64,11 @@ public class StudentController {
         return service.getAvgAgeStudents();
     }
 
+    @GetMapping("/sorted-by-name")
+    public Collection<String> getBySortedName(@RequestParam(required = false) String prefix) {
+        return service.getBySortedName(prefix);
+    }
+
     @GetMapping(params = "id")
     public Faculty getFaculty(@RequestParam(required = false) Long id) {
         return service.getFacultyById(id);

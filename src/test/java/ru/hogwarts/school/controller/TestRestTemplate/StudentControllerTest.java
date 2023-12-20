@@ -484,12 +484,63 @@ class StudentControllerTest {
     }
 
     @Test
+    void getBySortedName_WithPrefix_success() {
+        addGriffindor();
+        addSlytherin();
+        addHarry();
+        addDraco();
+
+        String actual = this.template.getForObject("http://localhost:" + port
+                        + "/student/sorted-by-name?prefix=" + PREFIX,
+                String.class);
+
+        assertNotNull(actual);
+        assertTrue(actual.contains(HARRY.getName().toUpperCase()));
+
+        deleteStudent(HARRY.getId());
+        deleteStudent(DRACO.getId());
+        deleteFaculty(GRIFFINDOR.getId());
+        deleteFaculty(SLYTHERIN.getId());
+    }
+
+    @Test
+    void getBySortedName_WithPrefix_InvalideInputException() {
+        String actual = this.template.getForObject("http://localhost:" + port
+                        + "/student/sorted-by-name?prefix=" + INVALIDE_PREFIX,
+                String.class);
+
+        assertNotNull(actual);
+        assertEquals(MESSAGE_INVALIDE_DATES, actual);
+    }
+
+    @Test
+    void getBySortedName_WithoutPrefix_success() {
+        addGriffindor();
+        addSlytherin();
+        addHarry();
+        addDraco();
+
+        String actual = this.template.getForObject("http://localhost:" + port
+                        + "/student/sorted-by-name",
+                String.class);
+
+        assertNotNull(actual);
+        assertTrue(actual.contains(HARRY.getName().toUpperCase()));
+        assertTrue(actual.contains(DRACO.getName().toUpperCase()));
+
+        deleteStudent(HARRY.getId());
+        deleteStudent(DRACO.getId());
+        deleteFaculty(GRIFFINDOR.getId());
+        deleteFaculty(SLYTHERIN.getId());
+    }
+
+    @Test
     void getFaculty_success() {
         addGriffindor();
         addHarry();
 
         Faculty actual = this.template.getForObject("http://localhost:" + port
-                        + "/student/?id=" + HARRY.getId(),
+                        + "/student?id=" + HARRY.getId(),
                 Faculty.class);
 
         assertNotNull(actual);

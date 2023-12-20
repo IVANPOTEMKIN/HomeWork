@@ -20,6 +20,7 @@ import ru.hogwarts.school.service.impl.FacultyServiceImpl;
 import ru.hogwarts.school.service.impl.StudentServiceImpl;
 
 import java.text.DecimalFormat;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -304,6 +305,38 @@ class StudentControllerTest {
                         .get("/student/average-age-students"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(numberFormat.format(AVG_AGE_STUDENTS)));
+    }
+
+    @Test
+    void getBySortedName_WithPrefix_success() throws Exception {
+        getAll_success();
+
+        Collection<String> expected = List.of(HARRY_NAME.toUpperCase(), HERMIONE_NAME.toUpperCase());
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/student/sorted-by-name?prefix=" + PREFIX))
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(expected)));
+    }
+
+    @Test
+    void getBySortedName_WithPrefix_InvalideInputException() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/student/sorted-by-name?prefix=" + INVALIDE_PREFIX))
+                .andExpect(status().isOk())
+                .andExpect(content().string(MESSAGE_INVALIDE_DATES));
+    }
+
+    @Test
+    void getBySortedName_WithoutPrefix_success() throws Exception {
+        getAll_success();
+
+        Collection<String> expected = List.of(HARRY_NAME.toUpperCase(), HERMIONE_NAME.toUpperCase());
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/student/sorted-by-name"))
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(expected)));
     }
 
     @Test

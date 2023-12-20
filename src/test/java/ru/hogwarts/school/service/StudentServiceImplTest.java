@@ -15,6 +15,7 @@ import ru.hogwarts.school.repository.StudentRepository;
 import ru.hogwarts.school.service.impl.StudentServiceImpl;
 
 import java.text.DecimalFormat;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -912,5 +913,48 @@ class StudentServiceImplTest {
                 studentService.getLastFiveStudents());
 
         verify(repository, times(1)).getLastFiveStudents();
+    }
+
+    @Test
+    void getBySortedName_WithPrefix_success() {
+        getAll_success();
+
+        when(checkService.validateCheck(anyString()))
+                .thenReturn(false);
+
+        Collection<String> expected = List.of(HARRY_NAME.toUpperCase(), HERMIONE_NAME.toUpperCase());
+
+        assertEquals(expected,
+                studentService.getBySortedName(PREFIX));
+
+        verify(repository, times(2)).findAll();
+        verify(checkService, times(1)).validateCheck(anyString());
+    }
+
+    @Test
+    void getBySortedName_WithPrefix_InvalideInputException() {
+        getAll_success();
+
+        when(checkService.validateCheck(anyString()))
+                .thenThrow(InvalideInputException.class);
+
+        assertThrows(InvalideInputException.class,
+                () -> studentService.getBySortedName(INVALIDE_PREFIX));
+
+        verify(repository, times(1)).findAll();
+        verify(checkService, times(1)).validateCheck(anyString());
+    }
+
+    @Test
+    void getBySortedName_WithoutPrefix_success() {
+        getAll_success();
+
+        Collection<String> expected = List.of(HARRY_NAME.toUpperCase(), HERMIONE_NAME.toUpperCase());
+
+        assertEquals(expected,
+                studentService.getBySortedName(null));
+
+        verify(repository, times(2)).findAll();
+        verify(checkService, times(0)).validateCheck(anyString());
     }
 }
