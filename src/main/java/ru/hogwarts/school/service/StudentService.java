@@ -31,4 +31,8 @@ public interface StudentService {
     Collection<String> getBySortedName(String prefix);
 
     Double getAvgAgeAllStudents();
+
+    void getNames();
+
+    void getNamesWithSynchronizedThread();
 }

@@ -15,6 +15,7 @@ import ru.hogwarts.school.service.StudentService;
 
 import java.text.DecimalFormat;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -261,5 +262,57 @@ public class StudentServiceImpl implements StudentService {
                 .mapToDouble(Student::getAge)
                 .average()
                 .orElse(0D);
+    }
+
+    @Override
+    public void getNames() {
+        logger.info("Вызван метод \"getNames()\" сервиса \"Student\"");
+
+        List<Student> students = (List<Student>) getAll();
+
+        getStudent(students.get(0));
+        getStudent(students.get(1));
+
+        Thread firstThread = new Thread(() -> {
+            getStudent(students.get(2));
+            getStudent(students.get(3));
+        });
+        firstThread.start();
+
+        Thread secondThread = new Thread(() -> {
+            getStudent(students.get(4));
+            getStudent(students.get(5));
+        });
+        secondThread.start();
+    }
+
+    @Override
+    public void getNamesWithSynchronizedThread() {
+        logger.info("Вызван метод \"getNames()\" сервиса \"Student\"");
+
+        List<Student> students = (List<Student>) getAll();
+
+        getStudentWithSynchronized(students.get(0));
+        getStudentWithSynchronized(students.get(1));
+
+        Thread firstThread = new Thread(() -> {
+            getStudentWithSynchronized(students.get(2));
+            getStudentWithSynchronized(students.get(3));
+        });
+        firstThread.start();
+
+        Thread secondThread = new Thread(() -> {
+            getStudentWithSynchronized(students.get(4));
+            getStudentWithSynchronized(students.get(5));
+        });
+        secondThread.start();
+    }
+
+    private void getStudent(Student student) {
+        logger.info("Вызван метод \"getStudent({}, {})\" сервиса \"Student\"; поток: {}", student.getId(), student.getName(), Thread.currentThread());
+    }
+
+    private synchronized void getStudentWithSynchronized(Student student) {
+        logger.info("Вызван метод \"getStudentWithSynchronized({}, {})\" сервиса \"Student\"; поток: {}", student.getId(), student.getName(), Thread.currentThread());
     }
 }

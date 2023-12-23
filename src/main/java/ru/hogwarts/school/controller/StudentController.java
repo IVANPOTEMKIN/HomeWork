@@ -74,6 +74,16 @@ public class StudentController {
         return service.getBySortedName(prefix);
     }
 
+    @GetMapping("/print-parallel")
+    public void getNames() {
+        service.getNames();
+    }
+
+    @GetMapping("/print-synchronized")
+    public void getNamesWithSynchronizedThread() {
+        service.getNamesWithSynchronizedThread();
+    }
+
     @GetMapping(params = "id")
     public Faculty getFaculty(@RequestParam(required = false) Long id) {
         return service.getFacultyById(id);
