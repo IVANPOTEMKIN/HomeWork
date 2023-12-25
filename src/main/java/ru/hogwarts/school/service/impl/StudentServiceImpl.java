@@ -15,7 +15,9 @@ import ru.hogwarts.school.service.StudentService;
 
 import java.text.DecimalFormat;
 import java.util.Collection;
-import java.util.List;
+import java.util.Objects;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 
 @Service
@@ -268,20 +270,27 @@ public class StudentServiceImpl implements StudentService {
     public void getNames() {
         logger.info("Вызван метод \"getNames()\" сервиса \"Student\"");
 
-        List<Student> students = (List<Student>) getAll();
+        Queue<Student> students = new ConcurrentLinkedQueue<>();
 
-        getStudent(students.get(0));
-        getStudent(students.get(1));
+        students.add(get(1L));
+        students.add(get(2L));
+        students.add(get(3L));
+        students.add(get(4L));
+        students.add(get(5L));
+        students.add(get(6L));
+
+        getStudent(Objects.requireNonNull(students.poll()));
+        getStudent(Objects.requireNonNull(students.poll()));
 
         Thread firstThread = new Thread(() -> {
-            getStudent(students.get(2));
-            getStudent(students.get(3));
+            getStudent(Objects.requireNonNull(students.poll()));
+            getStudent(Objects.requireNonNull(students.poll()));
         });
         firstThread.start();
 
         Thread secondThread = new Thread(() -> {
-            getStudent(students.get(4));
-            getStudent(students.get(5));
+            getStudent(Objects.requireNonNull(students.poll()));
+            getStudent(Objects.requireNonNull(students.poll()));
         });
         secondThread.start();
     }
@@ -290,20 +299,27 @@ public class StudentServiceImpl implements StudentService {
     public void getNamesWithSynchronizedThread() {
         logger.info("Вызван метод \"getNames()\" сервиса \"Student\"");
 
-        List<Student> students = (List<Student>) getAll();
+        Queue<Student> students = new ConcurrentLinkedQueue<>();
 
-        getStudentWithSynchronized(students.get(0));
-        getStudentWithSynchronized(students.get(1));
+        students.add(get(1L));
+        students.add(get(2L));
+        students.add(get(3L));
+        students.add(get(4L));
+        students.add(get(5L));
+        students.add(get(6L));
+
+        getStudentWithSynchronized(Objects.requireNonNull(students.poll()));
+        getStudentWithSynchronized(Objects.requireNonNull(students.poll()));
 
         Thread firstThread = new Thread(() -> {
-            getStudentWithSynchronized(students.get(2));
-            getStudentWithSynchronized(students.get(3));
+            getStudentWithSynchronized(Objects.requireNonNull(students.poll()));
+            getStudentWithSynchronized(Objects.requireNonNull(students.poll()));
         });
         firstThread.start();
 
         Thread secondThread = new Thread(() -> {
-            getStudentWithSynchronized(students.get(4));
-            getStudentWithSynchronized(students.get(5));
+            getStudentWithSynchronized(Objects.requireNonNull(students.poll()));
+            getStudentWithSynchronized(Objects.requireNonNull(students.poll()));
         });
         secondThread.start();
     }
