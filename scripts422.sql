@@ -1,0 +1,17 @@
+CREATE TABLE car(
+id BIGSERIAL PRIMARY KEY,
+brand TEXT NOT NULL,
+model TEXT UNIQUE NOT NULL,
+cost INTEGER CHECK (cost > 0) DEFAULT '100'
+);
+
+ALTER TABLE car
+ADD CONSTRAINT brand_model_unique UNIQUE (brand, model);
+
+CREATE TABLE human(
+id BIGSERIAL PRIMARY KEY,
+name TEXT UNIQUE NOT NULL,
+age INTEGER CHECK (age >= 0) DEFAULT '18',
+license TEXT DEFAULT 'no',
+car_id BIGSERIAL REFERENCES car (id)
+);
