@@ -14,10 +14,7 @@ import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.AvatarRepository;
 import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.repository.StudentRepository;
-import ru.hogwarts.school.service.impl.AvatarServiceImpl;
-import ru.hogwarts.school.service.impl.CheckServiceImpl;
-import ru.hogwarts.school.service.impl.FacultyServiceImpl;
-import ru.hogwarts.school.service.impl.StudentServiceImpl;
+import ru.hogwarts.school.service.impl.*;
 
 import java.text.DecimalFormat;
 import java.util.Collection;
@@ -49,6 +46,8 @@ class StudentControllerTest {
     private AvatarServiceImpl avatarService;
     @SpyBean
     private CheckServiceImpl checkService;
+    @SpyBean
+    private AdditionalServiceImpl additionalService;
     @InjectMocks
     private FacultyController controller;
 
